@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleHome" value="" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/binarysearch" />
+            <option value="$PROJECT_DIR$/designpatterns" />
+            <option value="$PROJECT_DIR$/dp" />
+            <option value="$PROJECT_DIR$/graph" />
+            <option value="$PROJECT_DIR$/hashmap" />
+            <option value="$PROJECT_DIR$/hshmaps" />
+            <option value="$PROJECT_DIR$/kafka-basics" />
+            <option value="$PROJECT_DIR$/leaderboard" />
+            <option value="$PROJECT_DIR$/linkedlists" />
+            <option value="$PROJECT_DIR$/oops-basics" />
+            <option value="$PROJECT_DIR$/practice" />
+            <option value="$PROJECT_DIR$/strings" />
+            <option value="$PROJECT_DIR$/tcp" />
+            <option value="$PROJECT_DIR$/test" />
+            <option value="$PROJECT_DIR$/trees" />
+            <option value="$PROJECT_DIR$/walmart" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
