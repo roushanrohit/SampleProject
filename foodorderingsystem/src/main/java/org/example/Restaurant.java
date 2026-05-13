@@ -36,11 +36,9 @@ public class Restaurant {
     public void updatePrice(Item item) throws ItemNotFoundException {
 
         Item existingItem = itemMap.get(item.getName());
-
         if (existingItem == null) {
             throw new ItemNotFoundException();
         }
-
         existingItem.setPrice(item.getPrice());
     }
 
@@ -65,17 +63,12 @@ public class Restaurant {
     }
 
     public synchronized boolean tryReserveSlot() {
-
-        if (!canProcess()) {
-            return false;
-        }
-
+        if (!canProcess()) return false;
         currentOrders++;
         return true;
     }
 
     public synchronized void releaseSlot() {
-
         if (currentOrders > 0) {
             currentOrders--;
         }

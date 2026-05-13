@@ -4,9 +4,6 @@ import java.util.Objects;
 
 public class Item {
 
-    /*
-        Tomorrow item may have additional features
-     */
     private String name;
     private double price;
 

@@ -6,6 +6,7 @@ import java.util.Map;
 public class Order {
 
     // Restaurant and list of items ordered from that restaurant
+    // Every order can span across multiple restaurants
     private Map<Restaurant, List<Item>> orderedItems;
 
     private int orderId;
