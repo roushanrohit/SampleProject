@@ -2,6 +2,22 @@ package org.example;
 
 import java.util.*;
 
+/*
+    createOrder() should NOT belong to Restaurant.
+    A Restaurant represents:
+    menu
+    pricing
+    capacity
+    restaurant state
+
+    It should NOT know:
+    all restaurants in the system
+    pricing algorithms
+    fallback logic
+    multi-restaurant orders
+
+    If you put createOrder() inside Restaurant class, it will violate SRP
+ */
 public class Restaurant {
 
     private final String name;
