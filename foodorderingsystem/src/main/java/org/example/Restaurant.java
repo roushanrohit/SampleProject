@@ -25,7 +25,7 @@ public class Restaurant {
     private final Map<String, Item> itemMap;
 
     // Maximum active orders restaurant can process
-    private int processingCapacity;
+    private final int processingCapacity;
 
     // Current active orders
     private int currentOrders;
@@ -62,18 +62,6 @@ public class Restaurant {
         return itemMap.get(itemName);
     }
 
-    public int getProcessingCapacity() {
-        return processingCapacity;
-    }
-
-    public void setProcessingCapacity(int processingCapacity) {
-        this.processingCapacity = processingCapacity;
-    }
-
-    public int getCurrentOrders() {
-        return currentOrders;
-    }
-
     public boolean canProcess() {
         return currentOrders < processingCapacity;
     }
@@ -102,21 +90,21 @@ public class Restaurant {
     @Override
     public boolean equals(Object o) {
 
-        if (this == o) {
-            return true;
-        }
-
-        if (!(o instanceof Restaurant)) {
-            return false;
-        }
-
-        Restaurant that = (Restaurant) o;
-
+        if (this == o) return true;
+        if (!(o instanceof Restaurant that)) return false;
         return name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
         return name.hashCode();
+    }
+
+    public void prepare(List<Item> items) {
+        try{
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -2,35 +2,27 @@ package org.example;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class Order {
 
     // Restaurant and list of items ordered from that restaurant
     // Every order can span across multiple restaurants
-    private Map<Restaurant, List<Item>> orderedItems;
+    private final Map<Restaurant, List<Item>> orderedItems;
 
-    private int orderId;
+    private final int orderId;
 
-    public Order(Map<Restaurant, List<Item>> orderedItems,
-                 int orderId) {
+    public Order(Map<Restaurant, List<Item>> orderedItems) {
         this.orderedItems = orderedItems;
-        this.orderId = orderId;
+        this.orderId = generateOrderId();
     }
 
     public Map<Restaurant, List<Item>> getOrderedItems() {
         return orderedItems;
     }
 
-    public void setOrderedItems(Map<Restaurant, List<Item>> orderedItems) {
-        this.orderedItems = orderedItems;
-    }
-
     public int getOrderId() {
         return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
     }
 
     @Override
@@ -39,5 +31,9 @@ public class Order {
                 "orderedItems=" + orderedItems +
                 ", orderId=" + orderId +
                 '}';
+    }
+
+    private int generateOrderId(){
+        return new Random().nextInt(100000);
     }
 }

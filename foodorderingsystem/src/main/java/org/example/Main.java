@@ -1,7 +1,9 @@
 package org.example;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,20 +24,17 @@ public class Main {
 
         // choose a pricing strategy
         PricingStrategy pricingStrategy = new LowestPriceStrategy();
+        // order processing service
+        OrderProcessingService orderProcessingService = new OrderProcessingService();
 
         Runnable task = () -> {
 
-            List<String> itemsToOrder = new ArrayList<>();
-            itemsToOrder.add("Idly");
-            itemsToOrder.add("Vada");
-
-            Order orderCreated = pricingStrategy.createOrder(restaurantList, itemsToOrder);
-            synchronized (System.out) {
-                if(orderCreated == null){
-                    System.out.println(Thread.currentThread().getName() + " -> Some items may not be available or restaurants are full");
-                } else {
-                    System.out.println(Thread.currentThread().getName() + " -> " + orderCreated);
-                }
+            Order orderCreated = pricingStrategy.createOrder(restaurantList, getRandomItemNames());
+            if(orderCreated == null){
+                System.out.println(Thread.currentThread().getName() + " -> Some items may not be available or restaurants are full");
+            } else {
+                System.out.println(Thread.currentThread().getName() + " -> " + orderCreated);
+                orderProcessingService.processOrder(orderCreated);
             }
         };
 
@@ -60,5 +59,18 @@ public class Main {
         }
 
         System.out.println("All requests completed.");
+    }
+
+    private static List<String> getRandomItemNames() {
+        List<String> allItems = new ArrayList<>(List.of(
+                "Idly",
+                "Vada",
+                "Paper Dosa",
+                "Set Dosa",
+                "Poori"
+        ));
+        Collections.shuffle(allItems);
+        int itemCount = 1 + new Random().nextInt(3);
+        return new ArrayList<>(allItems.subList(0, itemCount));
     }
 }

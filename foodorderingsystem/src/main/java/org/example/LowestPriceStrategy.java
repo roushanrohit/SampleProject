@@ -5,7 +5,7 @@ import java.util.*;
 public class LowestPriceStrategy implements PricingStrategy {
 
     @Override
-    public Order createOrder(List<Restaurant> restaurants, List<String> itemNames) {
+    public Order createOrder(List<Restaurant> allRestaurants, List<String> itemNames) {
 
         Map<Restaurant, List<Item>> orderMap = new HashMap<>();
 
@@ -13,7 +13,7 @@ public class LowestPriceStrategy implements PricingStrategy {
 
             // Get all restaurants selling this item
             List<Restaurant> candidateRestaurants =
-                    restaurants.stream()
+                    allRestaurants.stream()
                             .filter(r -> r.getItem(itemName) != null)
                             .sorted(Comparator.comparingDouble(r -> r.getItem(itemName).getPrice()))
                             .toList();
@@ -21,37 +21,33 @@ public class LowestPriceStrategy implements PricingStrategy {
             // Try restaurants from cheapest to costliest
             for(Restaurant restaurant : candidateRestaurants){
 
+                if(orderMap.containsKey(restaurant)){
+                    orderMap.get(restaurant).add(restaurant.getItem(itemName));
+                    break;
+                }
+
                 if(restaurant.tryReserveSlot()){
-                    try {
-                        Item item = restaurant.getItem(itemName);
-                        // simulate processing
-                        Thread.sleep(1000);
-                        orderMap.computeIfAbsent(restaurant, r -> new ArrayList<>()).add(item);
-
-                        // successfully assigned
-                        break;
-
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
-                    } finally {
-                        restaurant.releaseSlot();
-                    }
+                    Item item = restaurant.getItem(itemName);
+                    orderMap.computeIfAbsent(restaurant, r -> new ArrayList<>()).add(item);
+                    break;
                 }
             }
         }
 
+        // check if all items are available to order
         int assignedItemsCount = orderMap.values()
                 .stream()
                 .mapToInt(List::size)
                 .sum();
         if(assignedItemsCount < itemNames.size()){
-            // some items are either not available or restaurants are not having enough capacity
+            // release already booked slots
+            for(Restaurant restaurant : orderMap.keySet()){
+                restaurant.releaseSlot();
+            }
             return null;
         }
-        return new Order(orderMap, generateOrderId());
-    }
 
-    private int generateOrderId(){
-        return new Random().nextInt(100000);
+        // order is created at this point of time
+        return new Order(orderMap);
     }
 }
