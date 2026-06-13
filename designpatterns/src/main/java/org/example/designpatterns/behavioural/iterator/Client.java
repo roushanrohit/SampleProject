@@ -9,6 +9,10 @@ import java.util.Iterator;
     would require different methods to traverse them.
 
     A common interface that the client can use to traverse any kind of collection - Iterator interface
+    Provides a way to traverse a collection without revealing the underlying structure
+    Gives a uniform interface for traversal
+    We can also implement multiple types of iterators - forward iterators, backward iterators
+    without changing the collection.
  */
 public class Client {
 
@@ -18,12 +22,6 @@ public class Client {
         bookCollection.addBook(new Book("C++"));
         bookCollection.addBook(new Book("Java"));
 
-        /*
-            Provides a way to traverse a collection without revealing the underlying structure
-            Gives a uniform interface for traversal
-            We can also implement multiple types of iterators - forward iterators, backward iterators
-            without changing the collection.
-         */
         Iterator<Book> iterator = bookCollection.iterator(); // standard across all collections
         while(iterator.hasNext()){
             System.out.println(iterator.next().getTitle());
