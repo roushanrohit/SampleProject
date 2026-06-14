@@ -1,0 +1,318 @@
+— Class —
+
+Blueprint if we don’t have this, every time we create an object, we need to specify all its properties and all its functions.
+A class is like a form or questionnaire. An instance is like a form that has been filled out with information. Just like many people can fill out the same form with their unique information, many instances can be created from a single class.
+Within the same package, we don’t have to import the classes to use them.
+
+
+— Access Modifiers —
+
+Default Access Modifier: Visible only inside the same package
+Public: Visible everywhere
+Private: Only within the same class — we use getters and setters for this(keep control to yourself, what values you want to have in your member variables).
+
+Protected: Default + Accessible to subclasses outside package.
+Public > Protected > Default > Private
+
+Private and Protected access modifiers are not allowed at top level class(not nested within another class).
+
+
+— Final keyword —
+
+1. Final data members — once initialised cannot be changed. You can initialise them as soon as they are created/declared or inside the constructor.
+2. Final Method - Subclass cannot override this method. Basically we cannot change it which means we cannot override it.
+3. Final Class - No Inheritance from this class.  Basically we can’t change it which means we cannot inherit from it.
+4. If the final variable is a reference, this means that the variable cannot be re-bound to reference another object,
+    but the internal state of the object pointed by that reference variable can be changed i.e. you can add or remove elements from the final array or final list.
+
+
+— Constructors —
+
+1. Constructors do not have a return type
+2. Default Constructors are available only till we don’t define our own constructor.
+3. On every object, Constructors are called only once and that too at the absolute beginning — We can initialise the final data members inside the constructor.
+4. Constructors can’t be final as they are not inherited in Java, so they cannot be overridden either, therefore there’s no point in making them final.
+5. Constructors can’t be static as static keyword is bound to the class and not to an individual object.
+6. Public class and default constructor — We can access the class but cannot create it outside the package(basically access static methods and variables).
+    Public class and public constructor — visible everywhere
+    Default class and default constructor — visible within the package
+    Default class and public constructor — does not makes sense
+    Private Constructor — use this when you have some factory methods to create the objects e.g: when we have to have a control over number of instances/objects created(used in Singleton class).
+    Example:
+
+	class Vehicle{
+    		private Vehicle(){
+        		System.out.println("constructor of Vehicle");
+    		}
+	}
+
+	class Car {
+    		public static void main(String[] args) {
+        		Vehicle v = new Vehicle();  // compilation error since vehicle class constructor is private
+   		}
+	}
+
+
+— Static and Non-static methods —
+
+1. Non-static methods have access to both static and non-static members of the class.
+2. Static methods cannot directly access non-static variables or methods because they are not tied to any particular instance of the class. To access non-static members, a static method must create or refer to an instance of the class.
+
+
+— Inheritance —
+
+When we create object of derived class, parent class object is created first -> Parent class constructor is called first and then the derived class constructor is called.
+If the parent class does not have default constructor, we need to explicitly call the parametrised constructor of parent class using super keyword.
+Also, the call to super must be the first line inside the child class constructor.
+
+Example:
+
+	Class Vehicle {
+   		String color;
+   		Int maxSpeed;
+
+   		Vehicle(String color, int maxSpeed){
+      			this.color = color;
+      			this.maxSpeed = maxSpeed;
+   		}
+	}
+
+	Class GearedVehicle extends Vehicle {
+   		Int noOfGears;
+
+   		GearedVehicle(int noOfGears) {
+      			this.noOfGears = noOfGears;
+   		}
+	}
+
+We’ll get a compilation error saying : There is no parameterless constructor available in 'Vehicle' because for creating a GearedVehicle we need to create a Vehicle first and for that
+The JVM uses default/parameterless constructor. Now, since the parameterless constructor of Vehicle class is no longer available, we need to explicitly call the Vehicle constructor using the super keyword.
+
+  	// Inside GearedVehicle constructor
+   	GearedVehicle(int noOfGears, String color, int maxSpeed) {
+
+               // call to super() must be the first line in the derived class constructor
+      		super(color, maxSpeed);
+      		this.noOfGears = noOfGears;
+  	}
+
+Also, call to super must be the first line inside the constructor or else we’ll get an error saying: Call to 'super()' must be first statement in constructor body.
+
+Are private members inherited?
+Yes, derived class cannot directly access them, but it can access them through the getters and setters.
+
+Super Keyword:
+
+	class Vehicle {
+   		int maxSpeed;
+   		String color;
+   		void print() {
+      			System.out.println(“color:” + color +”,maxSpeed:”+maxSpeed);
+   		}
+	}
+
+	class Car extends Vehicle {
+   		int noOfGears;
+   		void print() {
+      			super.print(); // calls the vehicle’s print() method
+      			System.out.println(“noOfGears:”+noOfGears);
+   		}
+                Int getNoOfGears(){
+                	return noOfGears;
+                }
+	}
+
+
+
+— Polymorphism —
+
+
+Car
+—————————————
+|                         Vehicle        |
+|                     ——————  |
+|                     |                    |  |
+|                     |                    |  |
+|                     |___________|  |
+—————————————
+
+Every Car is a Vehicle, within the car, we have all the properties of a vehicle.
+Every Vehicle is not a Car.
+
+Vehicle v = new Car(); // this is allowed, superclass reference pointing to a subclass object
+Car c = new Vehicle(); // not allowed
+
+Also, compilation happens line by line and the compiler knows v is a Vehicle, so it will allow calling only Vehicle class methods on it
+v.getNoOfGears();  // will give a compile time error.
+v.print(); // print() is there in the Vehicle class so this line of code will compile, however, function calls take place at runtime so, print() of Car class will be executed.
+
+— Abstract Classes —
+When we want the subclasses to mandatorily implement some methods.
+Abstract Classes: When there is at least one incomplete(abstract) method in the class. All the subclasses would have to mandatorily implement this abstract method.
+We cannot create objects of an abstract class.
+
+— Interfaces —
+Interfaces: A class where all the methods are abstract. All the classes implementing the interface will have to implement all the methods.
+We cannot create objects of an interface.
+interface A {
+   // Any class that implements A must provide this method unless it inherits a valid implementation from a superclass.
+    public void method();
+}
+class One {
+   // defines a method() that matches the interface signature.
+    public void method() {
+       System.out.println(“One”);
+    }
+}
+class Two extends One implements A {
+    /* Two extends One (so it inherits method()). It also implements A.
+         Since One already provides a public void method(), Two is not required to override it — the inherited method satisfies the interface requirement.
+     */
+}
+public static void main(String[] args){
+    Two two = new Two();
+    two.method();
+}
+
+— Default Methods in Interfaces —
+Before Java 8: Interfaces were rigid
+Originally, Java interfaces could only contain:
+	•	abstract methods (implicitly public and abstract)
+	•	static final constants
+This created a problem: once an interface was released and widely implemented, you could not add new methods to it without breaking all existing implementations.
+
+
+public interface Animal {
+    void eat();
+}
+
+// If later you wanted to add a new method:
+
+public interface Animal {
+    void eat();
+    void sleep();  // ❌ BREAKING CHANGE
+}
+
+Every class implementing Animal would now fail to compile until they implemented sleep() — even if they didn’t care about it.
+
+Default methods solve this problem by allowing you to add new methods to interfaces with a default implementation, so existing classes don’t break.
+
+public interface Animal {
+    void eat();
+
+    // Added later without breaking existing code
+    default void sleep() {
+        System.out.println("Sleeping...");
+    }
+}
+
+class Dog implements Animal {
+    public void eat() {
+        System.out.println("Dog is eating");
+    }
+}
+
+Dog d = new Dog();
+d.eat();    // ✅ works
+d.sleep();  // ✅ uses default implementation
+
+Real-world scenario: Evolving standard APIs
+A major motivation was evolving Java’s standard library interfaces without breaking millions of lines of code.
+For example, java.util.List got new default methods like sort() and forEach() in Java 8:
+
+default void forEach(Consumer<? super T> action) {
+    for (T t : this) {
+        action.accept(t);
+    }
+}
+
+Without default methods, adding this would have broken every existing List implementation (like ArrayList, LinkedList, etc.).
+
+
+— Diamond Problem —
+
+It occurs when a class implements two interfaces that define the same default method.
+
+interface A {
+    default void show() {
+        System.out.println("A's show");
+    }
+}
+
+interface B {
+    default void show() {
+        System.out.println("B's show");
+    }
+}
+
+class C implements A, B {
+    // ❌ Compilation error! class C inherits unrelated defaults for show() from types A and B
+}
+
+
+You solve it by overriding the method in your class and explicitly telling Java which default you want to use.
+
+class C implements A, B {
+    @Override
+    public void show() {
+        // Choose A's version
+        A.super.show();
+
+        // Or choose B's version
+        // B.super.show();
+
+        // Or provide your own logic
+        // System.out.println("C's own show");
+    }
+}
+
+
+📊 Summary of Rules for Conflict Resolution
+	1	Class wins over interface: If a superclass provides a concrete method, it overrides any default method from an interface.
+	2	Most specific interface wins: If one interface extends another and both provide a default, the more specific one is used.
+	3	Explicit override required if ambiguity remains: If two unrelated interfaces define the same default method, you must override it in the implementing class (like in the example above).
+
+
+— Exceptions —
+
+1. Runtime Exceptions: Because of some bug in our code.
+2. Errors: Hard disk failures etc.
+3. Named Exceptions: Exceptions that we expect(e.g opening a file that doesn’t exists).
+
+
+Just as we need to specify return type in method signature, we need to specify exceptions in the method signature also.
+
+
+
+— Try/Catch/Finally —
+
+A try catch block must be followed by at least one catch/finally block.
+
+The finally block will always be executed unless:
+1. JVM is terminated(by calling System.exit())
+2. Thread executing the finally block is killed or interrupted.
+
+Examples:
+
+	class A {
+               public static void main(String[] args){
+                     try {
+                         return;
+                     } finally {
+                        System.out.println(“Hello Coder”); // this line will be executed before returning from the method
+                     }
+               }
+            }
+
+           // The below code will give a compilation error since we cannot catch generalised exception before specific exception.
+            class A {
+               public static void main(String[] args){
+                     try {
+                         int a = 5/0;
+                     } catch(Exception e ) {
+                         System.out.println(“Generalised Exception Catch”);
+                     } catch(ArithmeticException ae) {
+                        System.out.println(“Arithmetic Exception Catch”);
+                     }
+               }
+            }
