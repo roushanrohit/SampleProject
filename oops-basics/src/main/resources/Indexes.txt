@@ -1,0 +1,47 @@
+
+Indexes in databases are data structures stored on disk, but used/processed in CPU.
+
+Where indexes live :
+On disk:
+An index (e.g., B-tree in Postgres/Yugabyte, LSM tree in Cassandra/Yugabyte) is persisted on disk just like a table.
+When you query, the database may need to read index pages from disk (if they’re not already in memory).
+
+In memory (buffer cache / page cache):
+Frequently accessed index pages are cached in RAM.
+Most lookups ideally hit memory, not disk.
+
+
+How indexes are used (CPU role)
+The query planner/optimizer decides to use an index instead of a full table scan.
+The CPU then:
+1. Navigates the index structure in memory (B-tree traversal = follow pointers, compare keys).
+2. Applies additional filters (WHERE clauses not fully covered by index).
+3. Joins rows found via the index with other tables.
+So the search/traversal logic is CPU work, even if the raw index pages came from disk.
+
+
+
+👉 In short:
+Index data lives on disk (and cache in memory).
+Index traversal and filtering happens in CPU.
+
+
+🔹 How an index-based query typically works (B-tree example)
+Suppose you run:
+
+SELECT * FROM loan_account WHERE account_id = 123;
+
+CPU decides to use the index. The query planner sees account_id is indexed. CPU prepares to traverse the index.
+Read index pages. If the needed index pages are in memory (buffer cache), CPU reads them directly.
+If not, the DB pulls those index pages from disk into memory.
+CPU traverses the index
+The CPU walks the B-tree (root → branch → leaf) by comparing key values.
+At the leaf node, the index entry points to the actual row in the table (a “row pointer” or ctid in Postgres, DocDB key in Yugabyte, etc.).
+
+Read the table (heap) page
+
+The DB fetches the table page containing the row.
+Again: if cached, it comes from memory; if not, from disk.
+CPU fetches & applies filters
+
+The CPU interprets the row data, applies any extra conditions (WHERE, JOIN, etc.), and sends it forward in the query execution plan.

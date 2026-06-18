@@ -1,0 +1,16 @@
+
+@ComponentScan(basePackages = "in.novopay")
+This means Spring will scan all subpackages starting with in.novopay, regardless of whether they belong to the microservice codebase or a separate library JAR.
+When you build/run your app, the classes from infra-cache JAR are added to your application’s classpath.
+From the JVM’s perspective, there’s no difference between classes in your microservice and classes in that lib — they’re all just under in.novopay... packages on the classpath.
+
+
+@EnableJpaRepositories(basePackages = {"in.novopay.*"})
+@EntityScan(basePackages = {"in.novopay.*"})
+Any JPA entities and repositories under in.novopay... (whether in the service or libs) will be registered.
+
+
+Your microservice and infra libs share the same base package namespace (in.novopay...).
+Because of this, when you tell Spring to scan in.novopay, it ends up scanning both your service code and all infra libraries — since they all fall under the same root package.
+
+If the infra modules were under a totally different package name (say com.external.infra.cache), then you’d have to explicitly add that package to @ComponentScan / @EntityScan / @EnableJpaRepositories.

@@ -1,0 +1,65 @@
+
+Redis is like a remote database. To talk to it, you need a connection. Instead of opening/closing raw connections every time, Spring Data Redis uses a connection factory.
+LettuceConnectionFactory is an implementation of that factory, using the Lettuce Redis client library under the hood.
+
+
+Without it, Spring wouldn’t know where your Redis server is (host, port, DB index, cluster, or sentinel). It acts as the bridge between Spring and Redis.
+Any RedisTemplate needs a connection factory to talk to Redis.
+
+@Bean
+public LettuceConnectionFactory defaultRedisDbConnectionFactory() {
+    // Creates a connection factory to Redis DB 0
+    return new LettuceConnectionFactory("redis-host", 6379);
+}
+
+@Bean
+public RedisTemplate<String, Object> redisTemplate(
+        @Qualifier("defaultRedisDbConnectionFactory") LettuceConnectionFactory factory) {
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
+    template.setConnectionFactory(factory);
+    return template;
+}
+So whenever you call:
+redisTemplate.opsForValue().set("user:1", "Rohit");
+→ RedisTemplate asks the LettuceConnectionFactory for a connection
+→ Connection uses the Lettuce client
+→ Sends SET user:1 Rohit to Redis.
+
+we can define multiple LettuceConnectionFactory beans,
+each pointing to a different Redis DB index (default, masterData, notification, accounting, etc.).
+
+----------------------------------------------------------------------------------------------
+
+1. Standalone Redis
+One Redis server, one endpoint: host:port.
+Client connects directly → done ✅.
+Client doesn’t need to worry much.
+
+2. Redis with Sentinel
+Sentinel monitors master/replicas and does failover.
+Problem: When the master changes, how does the client know the new master’s host/port? 🤔
+Solution: The client (e.g. Lettuce) must be Sentinel-aware: It connects first to the Sentinel nodes. Sentinels tell the client which Redis node is currently the master. If a failover happens, Sentinels notify the client to switch.
+
+3. Redis Cluster
+Redis data is sharded across multiple nodes (key ranges → slots).
+Example: Node A has slots 0–5000.
+                Node B has slots 5001–10000
+                Node C has slots 10001–16383
+The client (like Lettuce) must be Cluster-aware: It keeps a map of slot → node. When Redis says “MOVED”, client updates its map and retries the command on the correct node. This redirection logic lives in the client.
+
+-------------------------------------------------------------------------------------------
+
+SELECT 0 --selects a database
+KEYS * -- list all keys
+
+If you run KEYS * without selecting a database, Redis will use the current database, which by default is database 0.
+
+
+✅ Key points:
+
+Redis commands always operate within the currently selected database.
+
+Each database is isolated, so keys in DB 1, DB 2, etc., will not be shown unless you SELECT that database.
+
+There is no single command to get keys from all databases in one go—Redis treats each DB independently.
+

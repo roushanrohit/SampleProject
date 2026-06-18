@@ -1,0 +1,80 @@
+
+When Spring creates a bean, sometimes it doesn’t give you the raw object you coded.
+Instead, it gives you a proxy (a wrapper object) that adds “extra behavior” before/after your method calls.
+
+This is how Spring implements features like:
+
+@Transactional → wraps your bean in a proxy that starts/commits/rolls back a DB transaction around your method.
+@Async → wraps your bean so method calls run in a different thread.
+@Cacheable → wraps your bean so method calls first check a cache before executing.
+
+So instead of giving you your class directly, Spring might give you: Proxy -> YourBean
+The proxy decides: “Before calling YourBean.doSomething(), should I check the cache? Start a transaction? Log the call?”
+
+Example:
+
+@Service
+public class PaymentService {
+
+    @Transactional
+    public void processPayment() {
+        // expects transaction handling
+    }
+}
+
+Spring doesn’t actually modify your class bytecode. Instead:
+When it sees @Transactional, it creates a proxy bean of PaymentService.
+That proxy intercepts method calls.
+
+If you call processPayment(), the proxy wraps it with:
+Start transaction
+Call the real method
+Commit/Rollback transaction
+
+If you call another method without @Transactional, the proxy just calls it directly.
+
+-------------------------------------------------------------------------------------
+
+If you put @Transactional on the class:
+
+@Service
+@Transactional
+public class PaymentService {
+    public void processPayment() { ... }
+    public void refund() { ... }
+}
+Then all public methods of the class get transactional behavior.
+
+--------------------------------------------------------------------------------------
+
+The @Transactional annotation should only be applied to public methods.
+If you annotate protected, private, or package-visible methods, it will silently be ignored.
+
+--------------------------------------------------------------------------------------
+
+Self-invocation gotcha:
+Even with a public method:
+
+
+@Service
+public class PaymentService {
+    @Transactional
+    public void processPayment() { ... }
+
+    public void doSomething() {
+        this.processPayment(); // ⚠️ NO transaction!
+    }
+}
+
+this.processPayment() bypasses the proxy.
+Only calls made from outside the proxy get intercepted.
+
+------------------------------------------------------------------------------------------
+
+Summary:
+Use @Transactional only on public methods.
+Make sure those methods are called from outside (another bean, not this).
+Class-level @Transactional → applies to all public methods.
+Method-level @Transactional → applies to that one public method.
+private / default (package-private) → ignored, because proxies can’t override them.
+

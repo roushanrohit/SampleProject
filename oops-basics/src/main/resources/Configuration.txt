@@ -1,0 +1,21 @@
+
+@Configuration
+@EnableConfigurationProperties(NovopayCacheProperties.class)
+@EnableCaching
+public class NovopayCacheConfiguration {
+
+@Configuration
+Marks this class as a source of bean definitions for the Spring container.
+Methods inside this class annotated with @Bean will be invoked and their return values registered as Spring beans.
+It is meta-annotated with @Component, so the class itself becomes a Spring-managed bean and will be picked up by component scanning.
+
+@EnableCaching
+Enables Spring’s cache abstraction: it registers the necessary infrastructure (cache interceptor/advisor) so annotations like @Cacheable, @CachePut, and @CacheEvict are honored
+Under the hood Spring will create an AOP advisor / interceptor that looks for those annotations and delegates to a CacheManager. Spring will look up a CacheManager bean (or you provide one).
+
+@EnableConfigurationProperties(NovopayCacheProperties.class)
+Tells Spring to create and bind an instance of NovopayCacheProperties from external configuration
+The NovopayCacheProperties class is expected to be annotated with @ConfigurationProperties (typically with a prefix like novopay.cache), so properties such as novopay.cache.host map into its fields.
+After this, you can @Autowired / inject NovopayCacheProperties (or receive it in a constructor) and get typed configuration values.
+
+

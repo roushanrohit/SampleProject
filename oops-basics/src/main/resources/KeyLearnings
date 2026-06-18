@@ -1,0 +1,330 @@
+
+Key Learning No1: NEVER ever do db calls/ api calls in a loop.
+                  Let's say you have 100000 records and each db or api call takes 1s, total time taken will be : 100000/3600 = 27 hrs.
+                  Not Acceptable in any system.
+
+
+
+Key Learning No2: When you take db dump in a .csv file, please note that NULL values will be converted to empty strings and when you restore it back,
+                  they will be stored as empty strings in db.
+                  Either do not take dump in .csv file or explicitly convert empty strings to null(Careful - should not convert values that were actually empty strings in db).
+
+
+
+Key Learning No3: When using java.io.fileWriter: fileWriter.write(2) will convert 2 to its UTF character and then write in the file,
+                  If the file is being consumed by an external system, this can create problems.
+
+
+
+Key Learning No4: Please be careful while using finally inside a try catch block, since it is executed even if you return from the try block.
+
+
+
+Key Learning No5: Each microservice has its own reserved heap memory. GC happens independently for each microservice.
+                  PID = 1842
+                  jcmd 1842 VM.flags
+
+                  -XX:InitialHeapSize=2147483648   (2 GB)
+                  -XX:MaxHeapSize=2147483648       (2 GB)
+
+                  ✔ 2 GB heap, isolated
+                  ✔ Independent GC
+                  ✔ Other microservices have nothing to do with it
+
+
+Key Learning No6:
+    SELECT lid.loan_account_id FROM loan_installment_details lid left join si_presentation_loan_account_details splad on lid.loan_account_id = splad.loan_account_id join account a on a.id = lid.loan_account_id WHERE lid.installment_date = '2025-12-26' AND a.office_id IN (2) and splad.is_deleted = false AND lid.is_deleted = false
+    --this gives 0 rows
+    SELECT lid.loan_account_id FROM loan_installment_details lid --left join si_presentation_loan_account_details splad on lid.loan_account_id = splad.loan_account_id join account a on a.id = lid.loan_account_id WHERE lid.installment_date = '2025-12-26' AND a.office_id IN (2) --and splad.is_deleted = false AND lid.is_deleted = false
+    --this gives 33 rows, why?
+    Answer:  Because the LEFT JOIN is turning into an INNER FILTER due to the condition splad.is_deleted = false in the WHERE clause.
+
+Key Learning No7:
+    Scanner s = new Scanner(System.in);
+    HashMap<String, Integer> citiesToVertexMapping = new HashMap<>();
+    System.out.println("Enter number of cities in the graph:");
+    int noOfVertices = s.nextInt();
+    System.out.println("Enter all the cities:");
+    for(int i = 0; i < noOfVertices; i++){
+        String city = s.nextLine();
+        citiesToVertexMapping.put(city, i);
+    }
+
+    int noOfVertices = s.nextInt();
+    nextInt() reads only the integer, but does NOT consume the newline (\n) left after pressing Enter.
+
+    So the next call:
+    String city = s.nextLine();
+    immediately reads that leftover newline — which is an empty string "".
+    Therefore, your first insertion becomes: citiesToVertexMapping.put("", 0);
+
+    Fix: Consume the leftover newline once after nextInt():
+        int noOfVertices = s.nextInt();
+        s.nextLine(); // <-- consume the leftover newline
+
+Key Learning No8:
+    Q1. You used a hashmap as a cache key and entries disappeared, why?
+    A mutable object is used as the key in a HashMap and that object is modified after insertion.
+    Example (classic interview + real prod bug)
+    class User {
+        String userId;
+        String role;
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(userId, role);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof User)) return false;
+            User u = (User) o;
+            return Objects.equals(userId, u.userId)
+                && Objects.equals(role, u.role);
+        }
+    }
+
+    Map<User, String> cache = new HashMap<>();
+    User user = new User();
+    user.userId = "123";
+    user.role = "USER";
+    cache.put(user, "cachedData");
+
+    // later…
+    user.role = "ADMIN";
+    cache.get(user); // returns null 😵
+
+    How to fix it :
+    Keys must be immutable. Use String, UUID, Long, etc or make key class: final / fields final -- equals/hashCode based only on immutable fields
+
+    Q2. HashMap with multi-threading:
+    Requirement: Multiple threads read & write to a cache. Same key might be accessed at the same time. No data corruption. No duplicate DB calls
+
+    Case 1: HashMap (what goes wrong)
+    Map<String, String> cache = new HashMap<>();
+
+    String getData(String key) {
+        if (!cache.containsKey(key)) {
+            String value = loadFromDB(key);   // expensive
+            cache.put(key, value);
+        }
+        return cache.get(key);
+    }
+    Two threads: T1 and T2
+    Both call getData("A") at the same time.
+
+    T1: containsKey("A") -> false
+    T2: containsKey("A") -> false
+    T1: loadFromDB("A")
+    T2: loadFromDB("A")   ❌ duplicate DB hit
+    T1: put("A", value1)
+    T2: put("A", value2)
+
+    Case 2: synchronizedMap (works but slow)
+    Map<String, String> cache =
+        Collections.synchronizedMap(new HashMap<>());
+    Now:
+    Thread safety ✔
+    But every operation locks the entire map
+
+    What happens
+    T1: get("A")  (lock entire map)
+    T2: get("B")  (blocked ❌)
+    T3: put("C")  (blocked ❌)
+    Even unrelated keys block each other.
+
+    Case 3: ConcurrentHashMap (correct + scalable)
+    ConcurrentHashMap<String, String> cache = new ConcurrentHashMap<>();
+
+    String getData(String key) {
+        return cache.computeIfAbsent(key, k -> loadFromDB(k));
+    }
+    What happens internally
+    Step-by-step with two threads
+    T1: computeIfAbsent("A")
+        → bucket for "A" is empty
+        → lock ONLY bucket("A")
+        → loadFromDB("A")
+        → put value
+
+    T2: computeIfAbsent("A")
+        → sees value already present
+        → returns it
+    ✔ DB called once
+    ✔ No corruption
+    ✔ No global lock
+
+    Why this works (key differences):
+
+    Bucket-level locking
+    Only the bucket for "A" is locked. Other keys still accessible
+    T1 → bucket("A")  locked
+    T2 → bucket("B")  free
+    T3 → bucket("C")  free
+
+
+Key Learning No9:
+----------  Select latest record for each customer_id based on inbound_consume_date ----------------
+SELECT DISTINCT ON (customer_id) *
+FROM mfi_reporting.posidex_inbound_file_details
+WHERE status = 'SUCCESS'
+ORDER BY customer_id, inbound_consume_date DESC;
+
+Key Learning No10:
+    While working on a legacy Java project recently, I noticed something very common in older codebases:
+
+    👉 String concatenation inside log statements
+
+    Most of us have written logs like this at some point:
+    logger.info("Order Id: " + orderId + " processed for user " + userId);
+    Looks simple. Works fine.
+
+    But behind the scenes, something unnecessary is happening 👇
+    ------------------------------------------------------------------------------------
+    ⚠️ The Hidden Problem
+
+    When we use string concatenation in logging:
+    • Java creates new String objects in memory
+    • This happens even if the log level is disabled
+    • It causes unnecessary CPU and memory usage
+
+    In high-traffic systems, this impact grows quickly.
+
+    It becomes even more noticeable in cron-based or batch services, where logs run repeatedly inside loops and scheduled jobs, silently creating thousands of unnecessary objects.
+    ------------------------------------------------------------------------------------
+    ✅ The Better Approach: Parameterized Logging
+
+    logger.info("Order Id: {} processed for user {}", orderId, userId);
+    ------------------------------------------------------------------------------------
+    💡 Why this is better
+    ✔ No unnecessary object creation
+    ✔ Formatting happens only when log level is enabled
+    ✔ Cleaner and more readable code
+    ✔ Recommended best practice in SLF4J & Log4j
+    ------------------------------------------------------------------------------------
+    🧠 Real-World Insight
+
+    Many legacy projects still use concatenation logging because it was never revisited.
+    Refactoring these logs may look like a small change, but in large systems and scheduled jobs, it can bring clear performance gains over time.
+    ------------------------------------------------------------------------------------
+    🎯 Takeaway
+
+    Performance tuning is not always about big architectural changes.
+    Sometimes it's about fixing small, silent inefficiencies hiding in plain sight.
+
+    ✨ Parameterized logging is one of those tiny upgrades that makes your code smarter.
+
+
+Key Learning No11:
+    The code looked fine:
+
+    @Value("${api.key}")
+    private String apiKey;
+
+    public MyService() {
+      System.out.println(apiKey); // null
+    }
+
+    The problem: I was accessing the value inside the constructor.
+    Spring injects @Value AFTER the object is created. Inside the constructor, it is always null.
+
+    The fix:
+
+    @Value("${api.key}")
+    private String apiKey;
+
+    @PostConstruct
+    public void init() {
+      System.out.println(apiKey); // works
+    }
+
+    Use @PostConstruct if you need injected values during initialization.
+    Constructor runs first. Injection happens after.
+
+Key Learning No12:
+    Why saveAll() is slow for 500k records ?
+    1. Memory Overhead: Hibernate/JPA keeps all these entities in the "Persistence Context" (the first-level cache). Managing 500,000 objects in memory creates massive garbage collection overhead and consumes significant RAM.
+    2. Transaction Management: You are likely running this within a single long-running transaction. If the database or the application crashes at minute 14, the entire 15 minutes of work is rolled back.
+    3. Lack of Batching: Unless explicitly configured, many JPA implementations will still send these records to the database one by one, or in sub-optimal chunks, leading to hundreds of thousands of round-trips to the DB.
+
+    Recommended Solutions
+    1. Implement Manual Batching
+    Instead of passing the whole list to saveAll(), break the list into smaller chunks (e.g., 500 or 1,000 records) and clear the persistence context periodically.
+
+    int batchSize = 1000;
+    for (int i = 0; i < trialBalanceEntities.size(); i++) {
+        trialBalanceDAOService.save(trialBalanceEntities.get(i));
+        if (i % batchSize == 0 && i > 0) {
+            // Ensure your DAO/Service flushes and clears the EntityManager here
+            trialBalanceDAOService.flushAndClear();
+        }
+    }
+
+    When you do:
+
+    saveAll(batch);
+    entityManager.flush();
+
+    Step-by-step:
+        saveAll() -- Entities become managed, stored in Hibernate’s Persistence Context (1st-level cache)
+        flush() -- Hibernate generates SQL, Executes INSERTs in DB
+        After flush()
+        ✅ DB is updated
+        ❌ Entities are STILL in memory
+        ❌ Still tracked for dirty checking
+
+    ❗ Why Hibernate does this (by design)
+    Hibernate assumes:
+        You might still modify entities
+        You may need:
+        Lazy loading
+        Dirty checking
+        Cascading updates
+        So it keeps everything managed
+
+    ✅ What clear() does
+        entityManager.clear();
+            Detaches ALL entities
+            Empties persistence context
+        After this:
+
+        Persistence Context: EMPTY ✅
+
+    ⚖️ Flush vs Clear (important distinction)
+    Operation	DB Write	Memory Cleanup
+    flush()	✅ Yes	❌ No
+    clear()	❌ No	✅ Yes
+    🧾 Final line for your notes
+    👉 flush() writes data to DB, but entities remain managed in persistence context.
+    Only clear() frees memory by detaching them.
+
+    This is exactly why your final solution works:
+
+    saveAll(batch);
+    flush();   // push to DB
+    clear();   // free memory
+
+Key Learning No13:
+    JPA ID Generation Strategies – Summary:
+    🔴 1. IDENTITY
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        DB auto-generates ID (auto-increment)
+        ❌ No JDBC batching
+        ❌ One DB call per insert → slow
+        👉 Use only for low-volume inserts
+
+    🟢 2. SEQUENCE ⭐ (Best choice)
+        @GeneratedValue(strategy = GenerationType.SEQUENCE)
+        Uses DB sequence
+        IDs fetched in bulk
+        ✅ Supports batching
+        ✅ High performance
+        ✅ Scales well
+
+        👉 Best for bulk inserts / batch jobs
+
+    Final Takeaway
+    👉 SEQUENCE is the only strategy suitable for high-volume inserts
+
+Key Learning No14:
