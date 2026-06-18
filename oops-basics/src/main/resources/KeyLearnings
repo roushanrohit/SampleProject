@@ -1,8 +1,16 @@
 
+Key Learning No-1: While processing anything in parallel, we should always make sure that the context is not shared,
+                   otherwise everything will be messed up, we should use a copy of the context always.
+
+
+Key Learning No0: --- All Reports Generation Logic ---
+                  While generating reports, everything should be in view, because lets say the application goes down and we need to generate the report manually,
+                  in that case, we should be able to generate the report without application help, just by running the query against the db.
+
+
 Key Learning No1: NEVER ever do db calls/ api calls in a loop.
                   Let's say you have 100000 records and each db or api call takes 1s, total time taken will be : 100000/3600 = 27 hrs.
                   Not Acceptable in any system.
-
 
 
 Key Learning No2: When you take db dump in a .csv file, please note that NULL values will be converted to empty strings and when you restore it back,
@@ -10,10 +18,8 @@ Key Learning No2: When you take db dump in a .csv file, please note that NULL va
                   Either do not take dump in .csv file or explicitly convert empty strings to null(Careful - should not convert values that were actually empty strings in db).
 
 
-
 Key Learning No3: When using java.io.fileWriter: fileWriter.write(2) will convert 2 to its UTF character and then write in the file,
                   If the file is being consumed by an external system, this can create problems.
-
 
 
 Key Learning No4: Please be careful while using finally inside a try catch block, since it is executed even if you return from the try block.

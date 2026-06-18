@@ -1,0 +1,134 @@
+
+Pessimistic locking is a common solution for exactly this kind of seat-booking problem.
+Suppose you have a Seat table:
+
+seat
+----
+id
+seat_number
+status  -- AVAILABLE, BOOKED
+When a user tries to book a seat, you first acquire a pessimistic write lock on that seat row:
+
+@Lock(LockModeType.PESSIMISTIC_WRITE)
+@Query("SELECT s FROM Seat s WHERE s.id = :seatId")
+Seat findSeatForUpdate(Long seatId);
+
+@Transactional
+public void bookTicket(Long seatId) {
+
+    Seat seat = seatRepository.findSeatForUpdate(seatId);
+
+    if (seat.getStatus() == BOOKED) {
+        throw new SeatAlreadyBookedException();
+    }
+
+    seat.setStatus(BOOKED);
+    seatRepository.save(seat);
+}
+
+What happens?
+
+Assume Seat 101 is available.
+
+Thread A
+Starts transaction.
+Executes SELECT ... FOR UPDATE.
+Gets lock on Seat 101.
+Checks status = AVAILABLE.
+Marks BOOKED.
+Commits.
+
+Thread B (at the same time)
+Starts transaction.
+Executes SELECT ... FOR UPDATE.
+Database blocks Thread B because Thread A holds the lock.
+After Thread A commits, Thread B acquires the lock.
+Reads latest state = BOOKED.
+Throws "Seat already booked".
+Result: only one booking succeeds.
+
+
+
+-------------------------------------------------------------
+
+
+can we use Reentrant Lock for this?
+
+Using ReentrantLock
+
+For example:
+
+
+private final Map<Long, ReentrantLock> seatLocks = new ConcurrentHashMap<>();
+
+public void bookTicket(Long seatId) {
+    ReentrantLock lock =
+            seatLocks.computeIfAbsent(seatId, id -> new ReentrantLock());
+
+    lock.lock();
+    try {
+        // Check seat availability
+        // Book seat
+    } finally {
+        lock.unlock();
+    }
+}
+
+This ensures that two threads in the same JVM trying to book the same seat execute sequentially.
+
+
+
+The problem
+
+Suppose you have:
+
+App Instance A
+App Instance B
+Same database
+
+User 1's request hits Instance A.
+User 2's request hits Instance B.
+
+Each instance has its own ReentrantLock object:
+
+Instance A: Lock(Seat 101)
+Instance B: Lock(Seat 101)
+
+They know nothing about each other.
+
+Both threads can proceed concurrently and potentially book the same seat.
+
+Why database locking is preferred
+
+With PESSIMISTIC_WRITE:
+
+SELECT * FROM seat
+WHERE id = 101
+FOR UPDATE;
+
+The lock is held in the database, so all application instances respect it.
+
+Instance A --> DB lock acquired
+Instance B --> waits
+
+This works whether you have:
+
+1 application instance
+10 application instances
+100 application instances
+
+
+When is ReentrantLock acceptable?
+
+Use it when:
+
+Single JVM application.
+Data is only in memory.
+No horizontal scaling.
+You need to protect some in-memory state.
+
+Examples:
+
+Cache updates.
+Rate limiting counters.
+Background job coordination inside one service instance.
