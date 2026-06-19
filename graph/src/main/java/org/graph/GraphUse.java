@@ -13,7 +13,7 @@ public class GraphUse {
         for(int i = 0; i < visited.length; i++) {
             if(!visited[i]){
                 System.out.println("Printing connected component : " + k++);
-                printBFSLevelWise(graph, visited, i);
+                printBFSLevelWiseV2(graph, visited, i);
                 System.out.println();
             }
         }
@@ -30,7 +30,6 @@ public class GraphUse {
             }
         }
     }
-
     // prints in bfs fashion
     private static void printBFS(int[][] graph, boolean[] visited, int sv) {
 
@@ -73,6 +72,35 @@ public class GraphUse {
             System.out.println(verticesAtALevel);
             queue.poll();
             if(!queue.isEmpty()) queue.add(null);
+        }
+    }
+
+    // prints in bfs fashion level wise
+    private static void printBFSLevelWiseV2(int[][] graph, boolean[] visited, int sv) {
+
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(sv);
+        visited[sv] = true;
+
+        while(!queue.isEmpty()){
+
+            int levelSize = queue.size();
+            StringBuilder verticesAtALevel = new StringBuilder();
+
+            for(int i = 0; i < levelSize; i++) {
+
+                int front = queue.poll();
+                verticesAtALevel.append(front).append(" ");
+
+                for (int j = 0; j < graph.length; j++) {
+                    if (graph[front][j] == 1 && !visited[j]) {
+                        queue.add(j);
+                        visited[j] = true;
+                    }
+                }
+            }
+
+            System.out.println(verticesAtALevel);
         }
     }
 

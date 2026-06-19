@@ -19,9 +19,10 @@ public class LengthOfPath {
 
         int[] dist = new int[graph.length];
         Arrays.fill(dist, -1);
+        dist[si] = 0;
+
         Queue<Integer> queue = new LinkedList<>();
         queue.add(si);
-        dist[si] = 0;
         visited[si] = true;
 
         while(!queue.isEmpty()) {

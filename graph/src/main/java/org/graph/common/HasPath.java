@@ -57,7 +57,7 @@ public class HasPath {
             }
         }
 
-        // adjacent bhi nhi tha aur kisi bhi neighbour se bhi path nhi aaya -- no path found
+        // same vertex bhi nhi tha aur kisi bhi neighbour se bhi path nhi aaya -- no path found
         return false;
     }
 }

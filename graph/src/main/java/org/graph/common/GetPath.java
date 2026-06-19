@@ -26,8 +26,9 @@ public class GetPath {
     private static List<Integer> getPathBFS(int[][] graph, int si, int ei, boolean[] visited) {
 
         Queue<Integer> queue = new LinkedList<>();
-        Map<Integer, Integer> hmap = new HashMap<>();
         queue.add(si);
+        visited[si] = true;
+        Map<Integer, Integer> hmap = new HashMap<>();
         hmap.put(si, -1);
 
         while(!queue.isEmpty()){
