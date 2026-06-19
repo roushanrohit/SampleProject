@@ -1,7 +1,9 @@
 
-Key Learning No-1: While processing anything in parallel, we should always make sure that the context is not shared,
+Key Learning No-2: While processing anything in parallel, we should always make sure that the context is not shared,
                    otherwise everything will be messed up, we should use a copy of the context always.
 
+Key Learning No-1: ALways be careful what you put inside IN clause since it has parameter limit of 65535 parameters.
+                    Might break something critical in production.
 
 Key Learning No0: --- All Reports Generation Logic ---
                   While generating reports, everything should be in view, because lets say the application goes down and we need to generate the report manually,
