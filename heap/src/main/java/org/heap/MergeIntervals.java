@@ -1,4 +1,4 @@
-package org.binarysearch;
+package org.heap;
 
 import java.util.ArrayList;
 import java.util.Arrays;

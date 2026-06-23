@@ -1,4 +1,4 @@
-package org.binarysearch;
+package org.heap;
 
 import java.util.Collections;
 import java.util.PriorityQueue;
