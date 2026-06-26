@@ -22,6 +22,13 @@ package org.backtracking;
  */
 public class PathToMaximumGold {
 
+    static int[][] dir = {
+            {1, 0},
+            {-1, 0},
+            {0, 1},
+            {0, -1}
+    };
+
     public static void main(String[] args) {
 
         int[][] grid = {{1,2,3},{0,5,0},{7,8,9}};
@@ -36,7 +43,25 @@ public class PathToMaximumGold {
 
     private static int dfsMaxGoldCollected(int[][] grid, int i, int j) {
 
+        if (i < 0 || j < 0 || i == grid.length || j == grid[0].length) {
+            return 0;
+        }
+        if (grid[i][j] == 0) {
+            return 0;
+        }
 
-        return 0;
+        int gold = grid[i][j];
+        grid[i][j] = 0;
+
+        int maxGoldCollectedFromNeighbours = 0;
+        for(int[] d : dir){
+            maxGoldCollectedFromNeighbours = Math.max(maxGoldCollectedFromNeighbours,
+                    dfsMaxGoldCollected(grid, i + d[0], j + d[1]));
+        }
+
+        // recursion done -- restore state
+        grid[i][j] = gold;
+
+        return gold + maxGoldCollectedFromNeighbours;
     }
 }
