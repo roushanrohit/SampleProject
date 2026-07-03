@@ -30,7 +30,6 @@ public class Main {
         Car car = new Car("BR263251");
         Bike bike = new Bike("KA01JS9803");
 
-
         Driver dv1 = new Driver("Rohit",loc1,car);
         Driver dv2 = new Driver("Rahul",loc2,bike);
 
@@ -39,5 +38,7 @@ public class Main {
 
         // we need to register all the drivers somewhere so that we're able to find the most
         // suitable driver for a passenger
+        // once a driver is booked, we need to remove it from the list of available drivers until
+        // the ride is complete -- keep a status
     }
 }
