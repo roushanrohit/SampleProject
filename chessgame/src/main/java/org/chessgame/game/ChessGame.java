@@ -39,6 +39,7 @@ public class ChessGame {
         }
 
         board.movePiece(from, to);
+
         switchTurn();
     }
 

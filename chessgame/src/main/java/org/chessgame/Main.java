@@ -40,8 +40,15 @@ public class Main {
                 Position from = new Position(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]));
 
                 Position to = new Position(Integer.parseInt(tokens[2]), Integer.parseInt(tokens[3]));
+                PieceColor movingPlayerColor = chessGame.getCurrentPlayer().getColor();
 
                 chessGame.move(from, to);
+
+                PieceColor opponent = movingPlayerColor == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+
+                if (chessGame.getBoard().isKingInCheck(opponent)) {
+                    System.out.println("CHECK!");
+                }
 
                 if (chessGame.getBoard().isKingCaptured(PieceColor.WHITE)) {
                     chessGame.printBoard();

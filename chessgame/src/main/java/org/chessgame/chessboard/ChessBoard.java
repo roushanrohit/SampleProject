@@ -5,6 +5,8 @@ import org.chessgame.chessPiece.*;
 public class ChessBoard {
 
     private Cell[][] cells;
+    private King whiteKing;
+    private King blackKing;
 
     public ChessBoard() {
         this.cells = new Cell[8][8];
@@ -43,7 +45,8 @@ public class ChessBoard {
         cells[0][3].setPiece(new Queen(PieceColor.BLACK));
 
         // King
-        cells[0][4].setPiece(new King(PieceColor.BLACK));
+        blackKing = new King(PieceColor.BLACK);
+        cells[0][4].setPiece(blackKing);
     }
 
     private void placeWhitePieces() {
@@ -67,7 +70,8 @@ public class ChessBoard {
         cells[7][3].setPiece(new Queen(PieceColor.WHITE));
 
         // King
-        cells[7][4].setPiece(new King(PieceColor.WHITE));
+        whiteKing = new King(PieceColor.WHITE);
+        cells[7][4].setPiece(whiteKing);
     }
 
     public Cell getCell(Position position){
@@ -86,20 +90,12 @@ public class ChessBoard {
         source.setPiece(null);
     }
 
-    // Since a captured king is removed from the board, not finding it means it has been captured.
     public boolean isKingCaptured(PieceColor color) {
 
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-
-                ChessPiece piece = cells[row][col].getPiece();
-                if (piece instanceof King && piece.getColor() == color) {
-                    return false;
-                }
-            }
+        if (color == PieceColor.WHITE) {
+            return whiteKing.isCaptured();
         }
-
-        return true;
+        return blackKing.isCaptured();
     }
 
     public void printBoard() {
@@ -117,5 +113,40 @@ public class ChessBoard {
             System.out.println();
         }
         System.out.println();
+    }
+
+    public boolean isKingInCheck(PieceColor kingColor) {
+
+        Position kingPosition = getPosition(kingColor == PieceColor.WHITE ? whiteKing : blackKing);
+        PieceColor attackerColor = kingColor == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+
+                ChessPiece piece = cells[row][col].getPiece();
+                if (piece == null) continue;
+                if (piece.getColor() != attackerColor) continue;
+                Position from = new Position(row, col);
+                if (piece.canMove(this, from, kingPosition)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public Position getPosition(ChessPiece piece) {
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+
+                if (cells[row][col].getPiece() == piece) {
+                    return cells[row][col].getPosition();
+                }
+            }
+        }
+
+        return null;
     }
 }
