@@ -22,6 +22,6 @@ public class Driver extends User {
 
     @Override
     public void notify(String msg) {
-        System.out.println(msg);
+        System.out.println("Driver" + msg);
     }
 }

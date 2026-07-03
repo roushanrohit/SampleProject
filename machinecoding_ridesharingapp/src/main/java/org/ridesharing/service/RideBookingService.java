@@ -8,11 +8,14 @@ import org.ridesharing.location.Location;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+    Acts as a Mediator b/w passengers and drivers
+ */
 public class RideBookingService {
 
     private List<Driver> availableDrivers = new ArrayList<>();
 
-    public RideBookingService(FareStrategy fareStrategy){
+    public RideBookingService(){
         availableDrivers = new ArrayList<>();
     }
 
@@ -24,7 +27,7 @@ public class RideBookingService {
         availableDrivers.add(driver);
     }
 
-    private void bookRide(Passenger passenger, double distance, FareStrategy fareStrategy){
+    public void bookRide(Passenger passenger, double distance, FareStrategy fareStrategy){
 
         // edge case
         if(availableDrivers.isEmpty()){
@@ -32,7 +35,21 @@ public class RideBookingService {
         } else {
             // find the nearest driver available -- we can add a radius limit also here...
             Driver driver = findNearestDriver(passenger.getLocation());
-            passenger.notify("Ride scheduled successfully with rider: " + driver.getName());
+            availableDrivers.remove(driver);
+
+            // create a Ride
+            Ride ride = new Ride(passenger, driver, distance, fareStrategy);
+            ride.calcFare(driver.getVehicle(), distance);
+
+            // notify the driver and the passenger
+            passenger.notify("Ride scheduled successfully with rider: " + driver.getName()
+                    + " and fare: " + ride.getFare());
+            driver.notify("Ride created with fare: " + ride.getFare() + " for distance: " + distance);
+            ride.updateStatus(RideStatus.ONGOING);
+
+            // ride completed successfully
+            ride.updateStatus(RideStatus.COMPLETED);
+            availableDrivers.add(driver);
         }
     }
 

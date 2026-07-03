@@ -2,7 +2,9 @@ package org.ridesharing;
 
 import org.ridesharing.actor.Driver;
 import org.ridesharing.actor.Passenger;
+import org.ridesharing.fare.StandardFareCalcStrategy;
 import org.ridesharing.location.Location;
+import org.ridesharing.service.RideBookingService;
 import org.ridesharing.vehichle.Bike;
 import org.ridesharing.vehichle.Car;
 
@@ -36,9 +38,10 @@ public class Main {
         Passenger p1 = new Passenger("Passenger1", loc3);
         Passenger p2 = new Passenger("Passenger2", loc4);
 
-        // we need to register all the drivers somewhere so that we're able to find the most
-        // suitable driver for a passenger
-        // once a driver is booked, we need to remove it from the list of available drivers until
-        // the ride is complete -- keep a status
+        RideBookingService rideBookingService = new RideBookingService();
+        rideBookingService.addDriver(dv1);
+        rideBookingService.addDriver(dv2);
+
+        rideBookingService.bookRide(p1,10.0,new StandardFareCalcStrategy());
     }
 }
