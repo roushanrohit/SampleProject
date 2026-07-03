@@ -53,4 +53,8 @@ public class ChessGame {
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
+
+    public ChessBoard getBoard() {
+        return board;
+    }
 }

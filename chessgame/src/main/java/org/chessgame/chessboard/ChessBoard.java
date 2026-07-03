@@ -78,8 +78,28 @@ public class ChessBoard {
         Cell source = getCell(from);
         Cell destination = getCell(to);
 
+        if (!destination.isEmpty()) {
+            destination.getPiece().setCaptured(true);
+        }
+
         destination.setPiece(source.getPiece());
         source.setPiece(null);
+    }
+
+    // Since a captured king is removed from the board, not finding it means it has been captured.
+    public boolean isKingCaptured(PieceColor color) {
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+
+                ChessPiece piece = cells[row][col].getPiece();
+                if (piece instanceof King && piece.getColor() == color) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public void printBoard() {

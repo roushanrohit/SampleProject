@@ -6,6 +6,7 @@ import org.chessgame.chessboard.Position;
 public abstract class ChessPiece {
 
     PieceColor color;
+    boolean captured;
 
     public ChessPiece(PieceColor color) {
         this.color = color;
@@ -13,6 +14,14 @@ public abstract class ChessPiece {
 
     public PieceColor getColor() {
         return color;
+    }
+
+    public boolean isCaptured() {
+        return captured;
+    }
+
+    public void setCaptured(boolean captured) {
+        this.captured = captured;
     }
 
     public abstract String getSymbol();

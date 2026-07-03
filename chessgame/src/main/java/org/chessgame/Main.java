@@ -43,6 +43,18 @@ public class Main {
 
                 chessGame.move(from, to);
 
+                if (chessGame.getBoard().isKingCaptured(PieceColor.WHITE)) {
+                    chessGame.printBoard();
+                    System.out.println("Black wins!");
+                    break;
+                }
+
+                if (chessGame.getBoard().isKingCaptured(PieceColor.BLACK)) {
+                    chessGame.printBoard();
+                    System.out.println("White wins!");
+                    break;
+                }
+
             } catch (Exception e) {
                 System.out.println("Move failed: " + e.getMessage());
             }
