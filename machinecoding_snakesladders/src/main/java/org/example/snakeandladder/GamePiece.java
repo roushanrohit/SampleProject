@@ -1,4 +1,4 @@
-package org.example.designpatterns.creational.prototype.snakeandladder;
+package org.example.snakeandladder;
 
 public class GamePiece {
 

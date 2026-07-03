@@ -1,4 +1,4 @@
-package org.example.designpatterns.creational.prototype.snakeandladder;
+package org.example.snakeandladder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
