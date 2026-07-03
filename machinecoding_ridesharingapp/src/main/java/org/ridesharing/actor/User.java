@@ -12,6 +12,9 @@ public abstract class User {
         this.location = location;
     }
 
+    // declared here ... since it is common to passenger and driver both
+    public abstract void notify(String msg);
+
     public String getName() {
         return name;
     }

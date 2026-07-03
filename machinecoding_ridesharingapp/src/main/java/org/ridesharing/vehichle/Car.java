@@ -2,7 +2,7 @@ package org.ridesharing.vehichle;
 
 public class Car implements Vehicle {
 
-    private static final String type = "Car";
+    private double farePerKm = 20.0;
     private String numberPlate;
 
     public Car(String numberPlate) {
@@ -15,7 +15,11 @@ public class Car implements Vehicle {
     }
 
     @Override
-    public String getType() {
-        return type;
+    public double getFarePerKm() {
+        return farePerKm;
+    }
+
+    public void setFarePerKm(double farePerKm) {
+        this.farePerKm = farePerKm;
     }
 }

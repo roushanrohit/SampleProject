@@ -19,4 +19,9 @@ public class Driver extends User {
     public Vehicle getVehicle() {
         return vehicle;
     }
+
+    @Override
+    public void notify(String msg) {
+        System.out.println(msg);
+    }
 }
