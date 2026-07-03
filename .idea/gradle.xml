@@ -10,6 +10,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/backtracking" />
+            <option value="$PROJECT_DIR$/chessgame" />
             <option value="$PROJECT_DIR$/designpatterns" />
             <option value="$PROJECT_DIR$/dp" />
             <option value="$PROJECT_DIR$/firstclub_membership" />
