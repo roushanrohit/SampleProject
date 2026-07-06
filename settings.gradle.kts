@@ -23,3 +23,5 @@ include("machinecoding_chessgame")
 include("machinecoding_snakesladders")
 include("machinecoding_ridesharingapp")
 include("machinecoding_gitvcs")
+
+include("misc")
