@@ -1,0 +1,174 @@
+Optimistic vs Pessimistic Locking:
+
+The main difference between optimistic locking and pessimistic locking is when they handle conflicts.
+
+Pessimistic locking assumes conflicts will happen, so it locks the data before modification.
+Optimistic locking assumes conflicts are rare, so it allows concurrent access and detects conflicts only when saving.
+
+Scenario
+
+Suppose you have an account table.
+
+account_id	balance	version
+101	         1000	   5
+
+Two users, Alice and Bob, both want to update the balance.
+
+1. Pessimistic Locking
+
+    `Imagine this SQL:
+
+    BEGIN;
+
+    SELECT *
+    FROM account
+    WHERE account_id = 101
+    FOR UPDATE;
+
+    FOR UPDATE acquires an exclusive lock.
+
+    Timeline
+    Time 1
+    Alice:
+    SELECT ... FOR UPDATE
+
+    Row is LOCKED.
+
+    -----------------------------------
+
+    Time 2
+    Bob:
+    SELECT ... FOR UPDATE
+
+    Bob waits.
+
+    Alice updates:
+
+    UPDATE account
+    SET balance = 900
+    WHERE account_id = 101;
+
+    Then
+
+    COMMIT;
+
+    Only after Alice commits does Bob acquire the lock.
+
+    Bob now reads
+
+    balance = 900
+
+    instead of the old value.`
+
+    Visualization:
+    Alice                Database                  Bob
+
+    SELECT FOR UPDATE ---> Lock Row
+                            |
+                            |<------ waiting
+    UPDATE
+    COMMIT ---------------> Unlock
+                                             SELECT FOR UPDATE
+                                             UPDATE
+                                             COMMIT
+
+    Only one transaction can modify the row at a time.
+
+    Advantages
+        No lost updates.
+        No concurrent modifications.
+    Easy to reason about.
+        Disadvantages
+        Users may wait.
+        Can reduce throughput.
+        Deadlocks are possible.
+
+2. Optimistic Locking
+
+    Here we don't lock the row.
+
+    Instead, we keep a version (or timestamp).
+
+    Current row:
+
+    account_id	balance	version
+    101        	 1000	   5
+
+    Alice reads
+
+    balance = 1000
+    version = 5
+
+    Bob also reads
+
+    balance = 1000
+    version = 5
+
+    Nobody is blocked.
+
+    Alice updates
+
+    She executes
+
+    UPDATE account
+    SET balance = 900,
+        version = 6
+    WHERE account_id = 101
+    AND version = 5;
+
+    The update succeeds because the version matches.
+
+    Now table becomes
+
+    account_id	balance	version
+    101	         900	   6
+    Bob updates
+
+    Bob still thinks the version is 5.
+
+    He runs
+
+    UPDATE account
+    SET balance = 800,
+        version = 6
+    WHERE account_id = 101
+    AND version = 5;
+
+    But now
+
+    version = 6
+
+    So
+
+    0 rows updated
+
+    Bob realizes someone modified the row before him.
+
+    He must
+
+    reload the latest data,
+    merge changes if necessary,
+    or ask the user to retry.
+
+When to Use Which
+
+Use optimistic locking when:
+    Reads greatly outnumber writes.
+    Multiple users rarely update the same record simultaneously.
+    You want higher concurrency and better scalability.
+
+Use pessimistic locking when:
+    Concurrent updates to the same rows are common.
+    Conflicts are expensive or unacceptable (for example, financial transfers or inventory reservation).
+    It is preferable for transactions to wait rather than fail and require a retry.
+
+In your context (Loan Management System):
+For a loan management system like the one you're building:
+
+Optimistic locking is a good fit for entities that are rarely updated concurrently, such as loan metadata or customer details.
+Pessimistic locking is often used for operations involving balances, repayments, standing instruction processing,
+or settlement logic where two batch jobs or API requests must not modify the same loan account at the same time.
+In such cases, using SELECT ... FOR UPDATE ensures only one transaction processes the account until it commits or rolls back.
+
+
+
