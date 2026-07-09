@@ -1,4 +1,4 @@
-package org.slidingwindow.fixedsizewindow;
+package org.strings;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

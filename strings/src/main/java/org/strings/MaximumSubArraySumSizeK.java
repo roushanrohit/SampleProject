@@ -1,4 +1,4 @@
-package org.slidingwindow.fixedsizewindow;
+package org.strings;
 
 public class MaximumSubArraySumSizeK {
 
