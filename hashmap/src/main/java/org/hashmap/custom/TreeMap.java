@@ -1,4 +1,4 @@
-package org.hashmap;
+package org.hashmap.custom;
 
 import java.util.ArrayList;
 import java.util.List;
