@@ -20,3 +20,5 @@ include("machinecoding_ridesharingapp")
 include("machinecoding_gitvcs")
 include("misc")
 include("machinecoding_pricingengine")
+
+include("stack")
