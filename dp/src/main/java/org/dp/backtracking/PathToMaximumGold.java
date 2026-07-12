@@ -1,4 +1,4 @@
-package org.backtracking;
+package org.dp.backtracking;
 
 /*
     You are given an m x n grid.
