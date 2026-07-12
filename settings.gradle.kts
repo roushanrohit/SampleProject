@@ -22,3 +22,4 @@ include("misc")
 include("machinecoding_pricingengine")
 
 include("stack")
+include("binarysearch")
