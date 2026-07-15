@@ -1,4 +1,4 @@
-package org.dp.backtracking;
+package misc;
 
 import java.util.ArrayList;
 import java.util.List;
