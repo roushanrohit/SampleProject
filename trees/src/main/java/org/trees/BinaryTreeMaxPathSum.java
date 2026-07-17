@@ -4,51 +4,24 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 
-public class BinaryTreeProblems {
+public class BinaryTreeMaxPathSum {
 
     public static void main(String[] args) {
+
         Scanner s = new Scanner(System.in);
         BinaryTreeNode<Integer> root = takeInputLevelWise(s);
-        System.out.println("count nodes : " + countNodes(root));
-        System.out.println("height: " + height(root));
-        mirror(root);
         printBinaryTreeLevelWise(root);
-        checkBST(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        System.out.println("Max path sum: " + maxPathSum(root));
     }
 
-    private static boolean checkBST(BinaryTreeNode<Integer> root, int minValue, int maxValue) {
+    private static int maxPathSum(BinaryTreeNode<Integer> root) {
 
-        if(root == null) return true;
-        if(root.data < minValue || root.data > maxValue) return false;
-        boolean isLeftOk = checkBST(root.left, minValue, root.data);
-        boolean isRightOk = checkBST(root.right, root.data + 1, maxValue);
-        return isLeftOk && isRightOk;
+
+
+        return 0;
     }
 
-    private static void mirror(BinaryTreeNode<Integer> root) {
-        if(root == null) return;
-        mirror(root.left);
-        mirror(root.right);
-        BinaryTreeNode<Integer> temp = root.left;
-        root.left = root.right;
-        root.right = temp;
-    }
-
-    private static int height(BinaryTreeNode<Integer> root) {
-
-        if(root == null) return 0;
-        int leftHeight = height(root.left);
-        int rightHeight = height(root.right);
-        return 1 + Math.max(leftHeight, rightHeight);
-    }
-
-    private static int countNodes(BinaryTreeNode<Integer> root) {
-
-        if(root == null) return 0;
-        return 1 + countNodes(root.left) + countNodes(root.right);
-    }
-
-    // 1 2 3 4 5 6 7 8 9 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+    // 1 2 3 4 5 -1 7 -1 -1 6 -1 8 9 -1 -1 -1 -1 -1 -1
     public static BinaryTreeNode<Integer> takeInputLevelWise(Scanner s){
 
         Queue<BinaryTreeNode<Integer>> queue = new LinkedList<>();

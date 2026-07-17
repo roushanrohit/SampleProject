@@ -1,36 +1,27 @@
 package org.trees;
 
-class TreeNode {
-    int val;
-    TreeNode left;
-    TreeNode right;
-    TreeNode(int val){
-        this.val = val;
-    }
-}
-
 public class BinaryTreeFromPreAndInOrder {
 
     public static void main(String[] args) {
 
         int[] preorder = {3,9,20,15,7};
         int[] inorder = {9,3,15,20,7};
-        TreeNode root = buildTree(preorder, inorder);
-        System.out.println(root.val);
+        BinaryTreeNode<Integer> root = buildTree(preorder, inorder);
+        System.out.println(root.data);
     }
 
-    public static TreeNode buildTree(int[] preorder, int[] inorder) {
+    public static BinaryTreeNode<Integer> buildTree(int[] preorder, int[] inorder) {
         return buildTree(preorder, inorder, 0, preorder.length - 1, 0, inorder.length - 1);
     }
 
-    public static TreeNode buildTree(int[] preorder, int[] inorder, int preStart, int preEnd, int inStart, int inEnd){
+    public static BinaryTreeNode<Integer> buildTree(int[] preorder, int[] inorder, int preStart, int preEnd, int inStart, int inEnd){
 
         if (preStart > preEnd || inStart > inEnd) {
             return null;
         }
 
         int rootData = preorder[preStart];
-        TreeNode root = new TreeNode(rootData);
+        BinaryTreeNode<Integer> root = new BinaryTreeNode<>(rootData);
 
         int inRootIndex = inStart;
         while(inorder[inRootIndex] != rootData){
