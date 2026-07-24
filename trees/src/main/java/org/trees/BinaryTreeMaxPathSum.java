@@ -6,19 +6,25 @@ import java.util.Scanner;
 
 public class BinaryTreeMaxPathSum {
 
+    private static int maxPathSum = Integer.MIN_VALUE;
     public static void main(String[] args) {
 
         Scanner s = new Scanner(System.in);
         BinaryTreeNode<Integer> root = takeInputLevelWise(s);
         printBinaryTreeLevelWise(root);
-        System.out.println("Max path sum: " + maxPathSum(root));
+        maxPathSum(root);
+        System.out.println("Max path sum: " + maxPathSum);
     }
 
     private static int maxPathSum(BinaryTreeNode<Integer> root) {
 
-
-
-        return 0;
+        if(root == null) return 0;
+        int leftMaxWithoutSplit = maxPathSum(root.left);
+        int rightMaxWithoutSplit = maxPathSum(root.right);
+        int maxPathSumWithoutSplit = root.data + Math.max(Math.max(leftMaxWithoutSplit, rightMaxWithoutSplit), 0);
+        int maxPathSumWithSplit = root.data + leftMaxWithoutSplit + rightMaxWithoutSplit;
+        maxPathSum = Math.max(maxPathSum, Math.max(maxPathSumWithSplit, maxPathSumWithoutSplit));
+        return maxPathSumWithoutSplit;
     }
 
     // 1 2 3 4 5 -1 7 -1 -1 6 -1 8 9 -1 -1 -1 -1 -1 -1
