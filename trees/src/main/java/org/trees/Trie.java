@@ -1,5 +1,6 @@
 package org.trees;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,12 +57,34 @@ public class Trie {
         return true;
     }
 
+    public boolean patternMatch(String word){
+        return patternMatch(root, word, 0);
+    }
+
+    public boolean patternMatch(TrieNode node, String word, int si){
+        if(si == word.length()){
+            return node.isWord;
+        }
+        char ch = word.charAt(si);
+        if(ch == '.') {
+            for(TrieNode child : node.children.values()){
+                if(patternMatch(child, word, si + 1)) return true;
+            }
+            return false;
+        } else {
+            if(!node.children.containsKey(ch)){
+                return false;
+            }
+            return patternMatch(node.children.get(ch), word, si + 1);
+        }
+    }
+
     public static void main(String[] args) {
 
         Trie trie = new Trie();
-        trie.insert("apple");
-        trie.insert("pen");
-        System.out.println(trie.search("appl"));
-        System.out.println(trie.startsWith("appl"));
+        trie.insert("bad");
+        trie.insert("dad");
+        trie.insert("mad");
+        System.out.println(trie.patternMatch(".ad"));
     }
 }
