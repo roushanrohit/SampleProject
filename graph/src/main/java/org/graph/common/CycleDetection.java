@@ -20,6 +20,7 @@ public class CycleDetection {
 
     /*
         If you visit a node that is already visited and is not your parent, cycle exists
+        For Undirected graphs
      */
     private static boolean detectCycle(int[][] graph, boolean[] visited, int si, int parent) {
 
@@ -33,6 +34,23 @@ public class CycleDetection {
                 }
             }
         }
+        return false;
+    }
+
+    /*
+        graph[i][j] = 1 if there is an edge from i -> j
+        For directed graphs
+     */
+    private static boolean detectCycle2(int[][] graph, int[] state, int si) {
+
+        state[si] = 1; // currently in progress
+        for(int i = 0; i < graph.length; i++){
+            if(graph[si][i] == 1){
+                if(state[i] == 1) return true;
+                if(state[i] == 0 && detectCycle2(graph, state, i)) return true;
+            }
+        }
+        state[si] = 2; // done exploring, safe forever
         return false;
     }
 }
