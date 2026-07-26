@@ -1,8 +1,6 @@
 package org.trees;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
 
 public class BinaryTreeProblems {
 
@@ -13,7 +11,39 @@ public class BinaryTreeProblems {
         System.out.println("height: " + height(root));
         mirror(root);
         printBinaryTreeLevelWise(root);
-        checkBST(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        boolean isBST = checkBST(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        System.out.println("Is BST: " + isBST);
+        if(isBST){
+            int k = 5;
+            List<Integer> list = inorder(root, new ArrayList<>());
+            System.out.println("kth smallest element: " + list.get(k - 1));
+        } else {
+            PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+            int k = 5;
+            kthSmallestElement(root, pq, k);
+            System.out.println("kth smallest element: " + pq.peek());
+        }
+    }
+
+    private static List<Integer> inorder(BinaryTreeNode<Integer> root, List<Integer> list) {
+        if(root == null){
+            return list;
+        }
+        inorder(root.left, list);
+        list.add(root.data);
+        inorder(root.right, list);
+        return list;
+    }
+
+    private static void kthSmallestElement(BinaryTreeNode<Integer> root, PriorityQueue<Integer> pq, int k) {
+
+        if(root == null) return;
+        kthSmallestElement(root.left, pq, k);
+        pq.offer(root.data);
+        if(pq.size() > k){
+            pq.poll();
+        }
+        kthSmallestElement(root.right, pq, k);
     }
 
     private static boolean checkBST(BinaryTreeNode<Integer> root, int minValue, int maxValue) {
