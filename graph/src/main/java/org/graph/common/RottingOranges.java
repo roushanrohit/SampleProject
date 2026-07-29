@@ -16,22 +16,26 @@ public class RottingOranges {
 
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < columns; j++){
+
+                // add rotten oranges to a queue
                 if(grid[i][j] == 2){
                     queue.add(new Pair(i, j));
                 } else if(grid[i][j] == 1){
-                    fresh++;
+                    fresh++; // increment fresh oranges counter
                 }
             }
         }
 
         if(fresh == 0) {
+            // no fresh oranges -- return
             System.out.println(0);
         } else {
 
+            // initialize minutes and directions
             int minutes = 0;
             int[][] directions = {{1,0},{-1, 0},{0,1},{0, -1}};
 
-            // BFS
+            // Multi source BFS
             while(!queue.isEmpty()){
                 int size = queue.size();
                 boolean rottenThisRound = false;
@@ -47,6 +51,7 @@ public class RottingOranges {
                                 grid[newRow][newCol] = 2;
                                 fresh--;
                                 rottenThisRound = true;
+                                // add the new rotten orange to the queue
                                 queue.add(new Pair(newRow, newCol));
                             }
                         }
@@ -57,6 +62,7 @@ public class RottingOranges {
                 if(rottenThisRound) minutes++;
             }
 
+            // return minutes to rot all oranges, if not possible return -1
             System.out.println(fresh == 0 ? minutes : -1);
         }
     }
