@@ -1,12 +1,11 @@
 package misc.intervals;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.*;
 
 /*
     Given an array of meeting time intervals where intervals[i] = [starti, endi],
     return the minimum number of conference rooms required.
+    sweep line problem
  */
 public class MeetingRooms2 {
 
@@ -16,18 +15,20 @@ public class MeetingRooms2 {
         System.out.print("Meeting Rooms Required: " + meetingRoomsRequired(intervals));
     }
 
-    private static int meetingRoomsRequired(int[][] intervals) {
-        if(intervals.length <= 1) return intervals.length;
-        Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
-        PriorityQueue<Integer> endTimes = new PriorityQueue<>();
-
+    private static int meetingRoomsRequired(int[][] intervals){
+        List<int[]> events = new ArrayList<>();
         for(int[] interval : intervals){
-            // if the earliest-ending room is free by the time this meeting starts, reuse it
-            if(!endTimes.isEmpty() && endTimes.peek() <= interval[0]){
-                endTimes.poll();
-            }
-            endTimes.offer(interval[1]);
+            events.add(new int[]{interval[0], 1});
+            events.add(new int[]{interval[1], -1});
         }
-        return endTimes.size();
+        events.sort(Comparator.comparingInt((int[] a) -> a[0]).thenComparing(a -> a[1]));
+
+        int activeMeetingRooms = 0;
+        int meetingRoomsNeeded = 0;
+        for(int[] event : events){
+            activeMeetingRooms += event[1];
+            meetingRoomsNeeded = Math.max(activeMeetingRooms, meetingRoomsNeeded);
+        }
+        return meetingRoomsNeeded;
     }
 }

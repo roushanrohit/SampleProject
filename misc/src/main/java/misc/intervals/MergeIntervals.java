@@ -18,8 +18,6 @@ public class MergeIntervals {
 
     private static List<int[]> mergeIntervals(int[][] intervals) {
 
-        // intervals overlap when currentstart < previousend
-        // sort by start time -- nlogn time
         Arrays.sort(intervals, Comparator.comparingInt(a -> a[0]));
 
         List<int[]> result = new ArrayList<>();
@@ -28,7 +26,7 @@ public class MergeIntervals {
 
             int[] next = intervals[i];
             // overlap
-            if(next[0] <= current[1]){
+            if(next[0] < current[1]){
                 current[1] = Math.max(current[1], next[1]);
             } else {
                 // no overlap
