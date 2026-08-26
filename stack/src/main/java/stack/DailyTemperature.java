@@ -6,7 +6,7 @@ import java.util.Stack;
 /*
     Given an array temperatures, where temperatures[i] is the temperature on day i,
     return an array where answer[i] tells you how many days you have to wait until a warmer temperature.
-    If there is no warmer day, return 0.
+    If there is no warmer day, return -1.
  */
 public class DailyTemperature {
 
@@ -24,6 +24,7 @@ public class DailyTemperature {
         int[] ans = new int[n];
         Arrays.fill(ans, -1);
         Stack<Integer> stack = new Stack<>();
+
         for(int i = n - 1; i >= 0; i--){
             while(!stack.isEmpty() && temperatures[stack.peek()] <= temperatures[i]){
                 stack.pop();

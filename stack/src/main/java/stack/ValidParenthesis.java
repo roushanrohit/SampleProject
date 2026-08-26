@@ -7,7 +7,7 @@ public class ValidParenthesis {
 
     public static void main(String[] args) {
 
-        System.out.println(isValid("([)]"));
+        System.out.println(isValid("()[]"));
     }
 
     public static boolean isValid(String s) {
@@ -20,14 +20,15 @@ public class ValidParenthesis {
             char ch = s.charAt(i);
             if(pairs.containsKey(ch)){
 
-                // its a closing bracket
+                // it is a closing bracket
                 if(!stack.isEmpty() && stack.peek() == pairs.get(ch)){
                     stack.pop();
                 } else {
                     stack.push(ch);
                 }
-            } else {
-                // its a opening bracket
+            } else if(pairs.containsValue(ch)){
+
+                // it is an opening bracket
                 stack.push(ch);
             }
         }

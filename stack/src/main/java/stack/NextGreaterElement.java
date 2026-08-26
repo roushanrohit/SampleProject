@@ -1,46 +1,41 @@
 package stack;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.Stack;
 
 /*
-    You are given two arrays:
-    nums1 = [4, 1, 2]
-    nums2 = [1, 3, 4, 2]
-    For every element in nums1, find the first greater element to its right in nums2. If there isn't one, return -1.
+    You are given an array:
+    nums = [1, 3, 4, 2]
+    For every element, find the first greater element to its right. If there isn't one, take -1.
  */
 public class NextGreaterElement {
 
     public static void main(String[] args) {
 
-        int[] nums1 = {4,1,2};
-        int[] nums2 = {1,3,4,2};
-        int[] ans = nextGreaterElement(nums1, nums2);
+        int[] nums = {1,3,4,2};
+        int[] ans = nextGreaterElement(nums);
         for(int num : ans){
             System.out.print(num + " ");
         }
     }
 
-    private static int[] nextGreaterElement(int[] nums1, int[] nums2) {
+    private static int[] nextGreaterElement(int[] nums) {
 
-        Map<Integer, Integer> hmap = new HashMap<>();
+        int[] ans = new int[nums.length];
+        Arrays.fill(ans, -1);
         Stack<Integer> stack = new Stack<>();
-        for(int i = nums2.length - 1; i >= 0; i--){
-            while(!stack.isEmpty() && stack.peek() <= nums2[i]){
+
+        for(int i = nums.length - 1; i >= 0; i--){
+            int current = nums[i];
+            while(!stack.isEmpty() && stack.peek() <= current){
                 stack.pop();
             }
-            if (stack.isEmpty()) {
-                hmap.put(nums2[i], -1);
-            } else {
-                hmap.put(nums2[i], stack.peek());
+            if (!stack.isEmpty()) {
+                ans[i] = stack.peek();
             }
-            stack.push(nums2[i]);
+            stack.push(current);
         }
-        int[] ans = new int[nums1.length];
-        for(int i = 0; i < nums1.length; i++){
-            ans[i] = hmap.get(nums1[i]);
-        }
+
         return ans;
     }
 }
