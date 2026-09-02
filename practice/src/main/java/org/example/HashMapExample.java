@@ -12,6 +12,8 @@ public class HashMapExample {
         // create a Map to store the frequencies
         Map<String, Integer> wordCounts = new HashMap<>();
         for(String word : words){
+            // If the key doesn't exist, put value.
+            // If it exists, combine the old value and value using the function.
             wordCounts.merge(word, 1, Integer::sum);
         }
         System.out.println(wordCounts);
