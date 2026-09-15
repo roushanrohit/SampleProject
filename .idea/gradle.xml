@@ -19,6 +19,10 @@
             <option value="$PROJECT_DIR$/pattern10_trees" />
             <option value="$PROJECT_DIR$/pattern11_dp" />
             <option value="$PROJECT_DIR$/pattern12_graphs" />
+            <option value="$PROJECT_DIR$/pattern13_slidingwindows" />
+            <option value="$PROJECT_DIR$/pattern14_lru" />
+            <option value="$PROJECT_DIR$/pattern15_bitwisemanipulation" />
+            <option value="$PROJECT_DIR$/pattern16_stringmanipulation" />
             <option value="$PROJECT_DIR$/pattern1_binarysearch" />
             <option value="$PROJECT_DIR$/pattern2_machinecoding" />
             <option value="$PROJECT_DIR$/pattern3_priorityqueues" />
@@ -28,7 +32,6 @@
             <option value="$PROJECT_DIR$/pattern7_hashmaps" />
             <option value="$PROJECT_DIR$/pattern8_linkedlists" />
             <option value="$PROJECT_DIR$/pattern9_monotonicstack" />
-            <option value="$PROJECT_DIR$/strings" />
             <option value="$PROJECT_DIR$/tcp" />
           </set>
         </option>
