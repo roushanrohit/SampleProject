@@ -1,4 +1,5 @@
 rootProject.name = "SampleProject"
+include("pattern0_intervals")
 include("pattern1_binarysearch")
 include("pattern2_machinecoding")
 include("pattern3_priorityqueues")

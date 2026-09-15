@@ -1,4 +1,4 @@
-package org.heap;
+package org.intervals;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;

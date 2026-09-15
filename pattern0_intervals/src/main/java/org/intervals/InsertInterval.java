@@ -1,4 +1,4 @@
-package misc.intervals;
+package org.intervals;
 
 import java.util.ArrayList;
 import java.util.List;
