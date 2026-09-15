@@ -1,7 +1,7 @@
 package binarysearch;
 
 // With duplicate elements
-public class SearchInRotatedSortedArray2 {
+public class SearchInRotatedSortedArray {
 
     public static void main(String[] args) {
 

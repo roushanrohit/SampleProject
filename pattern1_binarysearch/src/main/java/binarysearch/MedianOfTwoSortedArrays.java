@@ -4,8 +4,8 @@ public class MedianOfTwoSortedArrays {
 
     public static void main(String[] args) {
 
-        int[] a = {1,2};
-        int[] b = {3,4};
+        int[] a = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};    // m = 10
+        int[] b = {11, 12};                    // n = 2
         System.out.println(medianOfSortedArrays(a, b));
     }
 
@@ -16,15 +16,12 @@ public class MedianOfTwoSortedArrays {
             return medianOfSortedArrays(b, a);
         }
 
-        /* n should represent the number of elements that must be on
-           the left side of the partition across both arrays.
-         */
-        int n = (a.length + b.length + 1)/2;
+        int leftSize = (a.length + b.length + 1)/2;
         int left = 0;
         int right = a.length;
         while(left <= right){
             int i = (left + right) / 2;
-            int j = n - i;
+            int j = leftSize - i;
 
             int aLeft  = (i == 0) ? Integer.MIN_VALUE : a[i - 1];
             int aRight = (i == a.length) ? Integer.MAX_VALUE : a[i];

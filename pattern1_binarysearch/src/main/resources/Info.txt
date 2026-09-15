@@ -1,0 +1,342 @@
+
+*********************************************************************
+
+This is info file for questions asked on binary search patterns
+
+First type is find min/max in a rotated sorted array
+
+[0,1,2,4,5,6,7]
+      | rotated one unit left
+[1,2,4,5,6,7,0]
+      | rotated two units left
+[2,4,5,6,7,0,1]
+      | rotated three units left
+[4,5,6,7,0,1,2]
+
+Note that if we rotate 7(array.length) units left, we'll get the original array.
+First thing is to reduce k to k % arr.length.
+
+Let's say, it is rotated k = 3 units to the left and the array after rotation is: [4,5,6,7,0,1,2]
+If the array had not been rotated, min element = a[0] and max element = arr[arr.length - 1]
+
+left rotation by 3 :
+if(k == 0) return arr[0] else return arr[arr.length - k];
+
+ok, but we don't know k beforehand, so, we'll try to find the min element by binary search.
+why? --> because the array is still sorted, just that it has a break in between:
+4,5,6,7 --> sorted
+0,1,2 --> sorted
+
+left = 0, right = 6, mid = 3
+left part of binary search is from left to mid -- inclusive : [4,5,6,7]
+right part of binary search is from mid + 1 to right -- inclusive : [0,1,2]
+compare arr[left] with arr[mid] --> arr[left] <= arr[mid] --> yes, this means left part is sorted,
+                                    this also means minimum we can get from the left part is arr[left] = 4
+                                    and now, we just have to search the right part, so left = mid + 1 = 4
+left = 4, right = 6, mid = 5, min = 4
+left part of binary search is from left to mid -- inclusive : [0,1]
+right part of binary search is from mid + 1 to right -- inclusive : [2]
+compare arr[left] with arr[mid] --> arr[left] <= arr[mid] --> yes, this means left part is sorted,
+                                    this also means minimum we can get from the left part is arr[left] = 0
+                                    and now, we just have to search the right part, so left = mid + 1 = 6
+left = 6, right = 6, mid = 6, min = 0
+left part of binary search is from left to mid -- inclusive : [2]
+right part of binary search is from mid + 1 to right -- from index 7 to 6 which is invalid
+compare arr[left] with arr[mid] --> arr[left] <= arr[mid] --> yes, this means left part is sorted,
+                                    this also means minimum we can get from the left part is arr[left] = 2
+                                    and now, we just have to search the right part, so left = mid + 1 = 7
+left = 7, right = 6, mid = 6, min = 0
+since left > right, we'll exit the loop.
+
+Acha, isme ek aur point h when the array has duplicates.
+Let's say the array is : [0, 1, 2, 2, 2, 2, 2]
+                                 | rotated 6 unit lefts or 1 unit right
+                         [2, 0, 1, 2, 2, 2, 2]
+left = 0, right = 6, mid = 3
+left part of binary search is from left to mid -- inclusive : [2,0,1,2]
+right part of binary search is from mid + 1 to right -- inclusive : [2,2,2]
+compare arr[left] with arr[mid] --> arr[left] <= arr[mid] --> yes, this means left part is sorted,
+                                    this also means minimum we can get from the left part is arr[left] = 2
+                                    and now, we just have to search the right part, so left = mid + 1 = 4
+
+left = 4, right = 6, mid = 5, min = 2
+left part of binary search is from left to mid -- inclusive : [2,2]
+right part of binary search is from mid + 1 to right -- inclusive : [2]
+But notice, we have discarded the part [2,0,1,2] -- this had the minimum.
+So, we need an extra check whenever we have duplicate elements in the array:
+if(arr[left] == arr[mid] && arr[mid] == arr[right]){
+     min = Math.min(arr[left], min);
+     left++;
+     right--;
+}
+
+// full - code
+int min = Integer.MAX_VALUE;
+while(left <= right){
+
+    int mid = (left + right)/2;
+    if (arr[left] == arr[mid] && arr[mid] == arr[right]) {
+        // ambiguous -- can't tell where the break is, shrink linearly
+        min = Math.min(min, arr[left]);
+        left++;
+        right--;
+    } else if(arr[left] <= arr[mid]){
+        // left part is sorted
+        min = Math.min(min, arr[left]);
+        left = mid + 1;
+    } else {
+        // right part is sorted
+        min = Math.min(min, arr[mid]);
+        right = mid - 1;
+    }
+}
+
+return min;
+
+--- Same concept follows for max element in a rotated sorted array
+
+Search in a rotated array k liye, concept stays the same:
+arr = [1, 3, 1, 1, 1]
+target = 3
+
+index:  0  1  2  3  4
+arr:   [1, 3, 1, 1, 1]
+        L     M     R
+If you skip the duplicate check:
+    arr[left] <= arr[mid]   // 1 <= 1 → true, you assume the left half is sorted and move right:
+    left = mid + 1;
+The target 3 was at index 1, so you've already lost it.
+
+// full - code
+while(left <= right){
+
+    int mid = (left + right)/2;
+    if(arr[mid] == target) return mid;
+
+    if(arr[left] == arr[mid] && arr[mid] == arr[right]){
+        // can't tell which side is sorted -- shrink both ends
+        left++;
+        right--;
+    } else if(arr[left] <= arr[mid]){
+        // left part is sorted
+        if(arr[left] <= target && target < arr[mid]){
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    } else {
+        // right part is sorted
+        if(arr[mid] < target && target <= arr[right]){
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+}
+return -1;
+
+What if the array has 2 or more breaks?
+
+arr    = [0, 0, 2, 1, 0]
+target = 1
+
+This has two breaks:
+[0, 0, 2, 1, 0]
+       ↑  ↑
+     2→1 1→0
+The target 1 definitely exists at index 3.
+
+Now let's run our algorithm:
+index:  0  1  2  3  4
+arr:   [0, 0, 2, 1, 0]
+        L     M     R
+left = 0
+mid  = 2
+right = 4
+
+arr[left] = 0
+arr[mid]  = 2
+arr[right] = 0
+
+0 == 2 && 2 == 0 --> false.
+Next: arr[left] <= arr[mid] (0 <= 2) --> true, so our algorithm concludes: Left half [0,0,2] is sorted.
+It then checks :
+arr[left] <= target && target < arr[mid] (0 <= 1 && 1 < 2)
+Therefore it does: right = mid - 1; and discards: [1, 0]
+Now the search window is: [0, 0]
+So the algorithm returns: false even though: 1 exists
+
+The rotated-array binary-search algorithm relies on the array being a sorted array rotated once (one circular break).
+With two or more breaks, the algorithm is not guaranteed to work because its sorted-half assumption no longer holds.
+And, then the simplest solution is to search the entire array -- O(N) solution.
+
+*********************************************************************
+
+We'll now move to the second kind of problem: Median of Two Sorted Arrays.
+
+Core idea:
+Think of the combined sorted array as being divided into two halves:
+                    LEFT HALF | RIGHT HALF
+A:                  ...       | ...
+B:                  ...       | ...
+We don't actually merge the arrays. Instead, we try to find the correct partition point in both arrays.
+Let: m = A.length, n = B.length
+The total number of elements in the left half should be: leftSize = (m + n + 1) / 2
+
+Why +1?
+If the total number of elements is even: left half = right half
+If the total number of elements is odd: left half has one extra element
+
+Now suppose we take i elements from A into the left half. Since the left half must contain leftSize elements in total,
+we must take: leftSize - i elements from B.
+So our partitions look like:
+A:   a1, a2, ..., al | ar, ar+1, ...
+B:   b1, b2, ..., bl | br, br+1, ...
+where:
+al = A[i-1]
+ar = A[i]
+and
+bl = B[leftSize-i-1]
+br = B[leftSize-i]
+Now we need to determine whether this is the correct partition.
+
+Because A and B are individually sorted, we only need to check
+the elements immediately around the partitions:
+    al <= br
+    bl <= ar
+If both conditions are true, we have found the correct partition. Why?
+Because A and B are individually sorted, and these two conditions ensure that no element on the left is
+greater than an element on the right.
+
+Now calculating the median is easy.
+If total length is odd: median = max(al, bl)
+If total length is even: median = (max(al, bl) + min(ar, br)) / 2.0
+
+If:
+    al > br
+then we took too many elements from A. Move the partition in A to the left.
+    high = i - 1
+Otherwise, if:
+    bl > ar
+then we took too few elements from A. Move the partition in A to the right.
+    low = i + 1
+Therefore, we binary-search on the partition position i.
+
+Let's take an example to understand it:
+
+A = [1, 3, 8], length = 3
+B = [2, 7, 10, 11], length = 4
+left size = (3 + 4 + 1)/2 = 4
+If we merged them: [1, 2, 3, 7, |  8, 10, 11] and Median = 7.
+
+A = [1, 3, 8]
+           i = 2
+    [1, 3] --> goes to the left half
+          [8] --> goes to the right half
+
+B = [2, 7, 10, 11]
+           j = leftSize - i = 2
+    [2, 7] --> goes to the left half
+          [10, 11] --> goes to the right half
+
+So, elements in left half of the combined array:
+    [1, 3] -- comes from A
+    [2, 7] -- comes from B
+Max element in the left half of the combined array = Math.max(al, bl) = Math.max(3, 7) = 7
+and, elements in right half of the combined array:
+    [8] -- comes from A
+    [10, 11] -- comes from B
+Min element in the right half of the combined array = Math.min(ar, br) = Math.min(8, 10) = 8
+And, now the median is 7(since the total length : 3 + 4 is odd).
+
+Before moving to the code, I just want to share an edge case:
+Partition at the extreme ends:
+Take:
+A = [1, 2]
+B = [3, 4]
+Combined: [1, 2, 3, 4] and Median = (2 + 3) / 2 = 2.5
+
+leftSize = (2 + 2 + 1)/2 = 2, so we need 2 elements in the left half.
+Now, let's search for the correct partition i --> i can range from 0 to A.length
+i = 0 : No elements from A are taken into left side of the combined array
+i = A.length = 2 : All elements from A are now into left side of the combined array.
+So, in this example:
+A = [1, 2]
+           i = 2, al = A[i - 1] = 2, ar is not defined here, so we take ar = Integer.MAX_VALUE
+also, leftSize = 2, so j = (2 - 2) = 0
+B = [3, 4]
+  j = 0, bl is not defined here, so we take bl = Integer.MIN_VALUE, br = A[j] = 3
+
+Now check: al <= br --> 2 <= 3 true
+           bl <= ar --> Integer.MIN_VALUE <= Integer.MAX_VALUE true
+Partition is correct, median = (Math.max(al, bl) + Math.min(ar, br))/2.0 // total number of elements in the combined array is even
+                             = (Math.max(2, Intger.MIN_VALUE) + Math.min(Integer.MAX_VALUE, 3))/2.0
+                             = (2 + 3)/2.0
+                             = 2.5
+
+full - code :
+
+int leftSize = (a.length + b.length + 1)/2;
+int left = 0;
+int right = a.length;
+while(left <= right){
+    int i = (left + right) / 2;
+    int j = leftSize - i;
+
+    int aLeft  = (i == 0) ? Integer.MIN_VALUE : a[i - 1];
+    int aRight = (i == a.length) ? Integer.MAX_VALUE : a[i];
+
+    int bLeft  = (j == 0) ? Integer.MIN_VALUE : b[j - 1];
+    int bRight = (j == b.length) ? Integer.MAX_VALUE : b[j];
+
+    if (aLeft > bRight) {
+        right = i - 1;
+    } else if (bLeft > aRight) {
+        left = i + 1;
+    } else {
+        // Correct partition
+        int maxLeft = Math.max(aLeft, bLeft);
+        int minRight = Math.min(aRight, bRight);
+
+        // Odd total length
+        if ((a.length + b.length) % 2 == 1) {
+            return maxLeft;
+        } else {
+            // Even total length
+            return (maxLeft + minRight) / 2.0;
+        }
+    }
+}
+return 0.0;
+
+There is one more edge case we must talk about:
+Take:
+A = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+B = [11, 12]
+Combined: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] and Median = (6 + 7) / 2 = 6.5
+
+leftSize = (10 + 2 + 1)/2 = 6, so we need 6 elements in the left half.
+Now, let's search for the correct partition i --> i can range from 0 to 10
+i = (left + right)/2 = 5
+A = [1, 2, 3, 4, 5, | 6, 7, 8, 9, 10]
+                      i
+j = 6 - 5 = 1
+B = [11, | 12]
+           j
+al = 5, ar = 6
+bl = 11, br = 12
+al <= br --> 6 <= 12 true
+bl <= ar --> 11 <= 6 false --> we should take more elements from A --> left = i + 1 = 6
+recalculate i = (left + right)/2 = (6 + 10)/2 = 8
+j = 6 - 8 = -2  //  INVALID INDEX
+al = 8, ar = 9
+bl = B[-3] // INVALID
+br = B[-2] // INVALID
+..... and our program terminates.
+
+So, we should always binary search the smaller array. A simple way to do this is:
+if (a.length > b.length) {
+    return medianOfSortedArrays(b, a);
+}
+
+*********************************************************************
