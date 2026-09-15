@@ -1,4 +1,4 @@
-package org.dp.backtracking;
+package org.graph.common;
 
 public class WordSearch {
 

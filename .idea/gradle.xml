@@ -9,15 +9,15 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/backtracking" />
-            <option value="$PROJECT_DIR$/dp" />
-            <option value="$PROJECT_DIR$/graph" />
             <option value="$PROJECT_DIR$/kafka-basics" />
             <option value="$PROJECT_DIR$/machinecoding_firstclubmembership" />
             <option value="$PROJECT_DIR$/machinecoding_foodorderingsystem" />
             <option value="$PROJECT_DIR$/machinecoding_leaderboard" />
             <option value="$PROJECT_DIR$/misc" />
             <option value="$PROJECT_DIR$/oops-basics" />
+            <option value="$PROJECT_DIR$/pattern10_trees" />
+            <option value="$PROJECT_DIR$/pattern11_dp" />
+            <option value="$PROJECT_DIR$/pattern12_graphs" />
             <option value="$PROJECT_DIR$/pattern1_binarysearch" />
             <option value="$PROJECT_DIR$/pattern2_machinecoding" />
             <option value="$PROJECT_DIR$/pattern3_priorityqueues" />
@@ -29,7 +29,6 @@
             <option value="$PROJECT_DIR$/pattern9_monotonicstack" />
             <option value="$PROJECT_DIR$/strings" />
             <option value="$PROJECT_DIR$/tcp" />
-            <option value="$PROJECT_DIR$/trees" />
           </set>
         </option>
       </GradleProjectSettings>
