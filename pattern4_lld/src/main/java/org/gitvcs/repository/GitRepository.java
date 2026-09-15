@@ -1,15 +1,15 @@
 package org.gitvcs.repository;
 
 import org.gitvcs.exception.BranchAlreadyExistsException;
-import org.gitvcs.exception.BranchNotFoundException;
 import org.gitvcs.exception.UserNotRegisteredException;
 import org.gitvcs.model.Branch;
 import org.gitvcs.model.Commit;
+import org.gitvcs.model.User;
+import org.gitvcs.util.HashUtil;
+import org.gitvcs.exception.BranchNotFoundException;
 import org.gitvcs.model.MergeResult;
 import org.gitvcs.model.MergeStatus;
-import org.gitvcs.model.User;
 import org.gitvcs.model.Workspace;
-import org.gitvcs.util.HashUtil;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package org.example.snakeandladder;
+package org.snakeandladder;
 
 public class GamePiece {
 
