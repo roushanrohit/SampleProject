@@ -10,22 +10,22 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/backtracking" />
-            <option value="$PROJECT_DIR$/designpatterns" />
             <option value="$PROJECT_DIR$/dp" />
             <option value="$PROJECT_DIR$/graph" />
-            <option value="$PROJECT_DIR$/hashmap" />
             <option value="$PROJECT_DIR$/kafka-basics" />
-            <option value="$PROJECT_DIR$/linkedlists" />
             <option value="$PROJECT_DIR$/machinecoding_firstclubmembership" />
             <option value="$PROJECT_DIR$/machinecoding_foodorderingsystem" />
             <option value="$PROJECT_DIR$/machinecoding_leaderboard" />
             <option value="$PROJECT_DIR$/misc" />
-            <option value="$PROJECT_DIR$/multithreading" />
             <option value="$PROJECT_DIR$/oops-basics" />
             <option value="$PROJECT_DIR$/pattern1_binarysearch" />
             <option value="$PROJECT_DIR$/pattern2_machinecoding" />
             <option value="$PROJECT_DIR$/pattern3_priorityqueues" />
             <option value="$PROJECT_DIR$/pattern4_lld" />
+            <option value="$PROJECT_DIR$/pattern5_multithreading" />
+            <option value="$PROJECT_DIR$/pattern6_designpatterns" />
+            <option value="$PROJECT_DIR$/pattern7_hashmaps" />
+            <option value="$PROJECT_DIR$/pattern8_linkedlists" />
             <option value="$PROJECT_DIR$/stack" />
             <option value="$PROJECT_DIR$/strings" />
             <option value="$PROJECT_DIR$/tcp" />
