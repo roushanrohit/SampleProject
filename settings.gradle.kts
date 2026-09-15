@@ -1,6 +1,8 @@
 rootProject.name = "SampleProject"
 include("pattern1_binarysearch")
 include("pattern1_machinecoding")
+include("pattern1_priorityqueues")
+
 include("kafka-basics")
 include("oops-basics")
 include("tcp")
@@ -10,7 +12,6 @@ include("graph")
 include("linkedlists")
 include("strings")
 include("trees")
-include("heap")
 include("designpatterns")
 include("backtracking")
 include("machinecoding_foodorderingsystem")

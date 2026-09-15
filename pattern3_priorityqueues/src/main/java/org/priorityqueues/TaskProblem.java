@@ -54,7 +54,7 @@ public class TaskProblem {
                 maxIndex = i;
             }
         }
-        System.out.println("maxIndex: " + maxIndex);
+        System.out.println("Server : " + maxIndex);
     }
 
 }
