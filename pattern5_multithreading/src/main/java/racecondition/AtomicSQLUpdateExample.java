@@ -10,16 +10,16 @@ public class AtomicSQLUpdateExample {
 
     private void withdraw(int amount) {
 
-        while(true){
-            int current = balance.get();
-            if (current < amount) {
-                System.out.println(Thread.currentThread().getName() + " failed");
-                return;
-            }
-            if (balance.compareAndSet(current, current - amount)) {
-                System.out.println(Thread.currentThread().getName() + " success, balance = " + balance.get());
-                return;
-            }
+        int current = balance.get();
+        if (current < amount) {
+            System.out.println(Thread.currentThread().getName() + " failed");
+            return;
+        }
+        if (balance.compareAndSet(current, current - amount)) {
+            System.out.println(Thread.currentThread().getName() + " success, balance = " + balance.get());
+        } else {
+            // someone modified this amount while you were processing
+            System.out.println(Thread.currentThread().getName() + " failed");
         }
     }
 
