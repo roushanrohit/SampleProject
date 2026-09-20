@@ -1,14 +1,14 @@
 package misc;
 
-public class MaximumSubarray {
+public class MaximumSumSubArray {
 
     public static void main(String[] args) {
 
         int[] nums = {-2,1,-3,4,-1,2,1,-5,4};
-        System.out.println("Maximum subarray sum: " + maxSubArraySum(nums));
-        int[] maxSubarrayValues = maxSubArraySum2(nums);
-        System.out.println("Overall start: " + maxSubarrayValues[0] + ", Overall End: " + maxSubarrayValues[1]
-                + ", Max Sum: " + maxSubarrayValues[2]);
+        System.out.println("Maximum sub array sum: " + maxSubArraySum(nums));
+        int[] maxSubArrayValues = maxSubArraySum2(nums);
+        System.out.println("Overall start: " + maxSubArrayValues[0] + ", Overall End: " + maxSubArrayValues[1]
+                + ", Max Sum: " + maxSubArrayValues[2]);
     }
 
     public static int maxSubArraySum(int[] arr){
@@ -39,7 +39,7 @@ public class MaximumSubarray {
                 currentSum = currentSum + arr[i];
             }
 
-            if(maxSum < currentSum){
+            if(currentSum > maxSum){
                 maxSum = currentSum;
                 overAllStart = currentStart;
                 overAllEnd = i;
