@@ -1,8 +1,6 @@
-package org.slidingwindows;
+package org.slidingwindows.variable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /*
@@ -20,7 +18,6 @@ public class MinimumWindowString {
 
     public static String minWindow(String s, String t) {
 
-        List<String> allCandidateSubstrings = new ArrayList<>();
         String minLengthSubstring = "";
         Map<Character, Integer> need = new HashMap<>();
         for(char ch : t.toCharArray()){
@@ -42,7 +39,6 @@ public class MinimumWindowString {
                     if(minLengthSubstring.isEmpty() || (ei - si + 1) < minLengthSubstring.length()){
                         minLengthSubstring = s.substring(si, ei + 1);
                     }
-                    allCandidateSubstrings.add(s.substring(si, ei + 1));
 
                     char left = s.charAt(si);
                     if (need.containsKey(left)) {
@@ -59,7 +55,6 @@ public class MinimumWindowString {
             ei++;
         }
 
-        System.out.println(allCandidateSubstrings);
         return minLengthSubstring;
     }
 

@@ -1,4 +1,7 @@
-package org.slidingwindows;
+package org.slidingwindows.variable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /*
     You are given a string s and an integer k. You can choose any character of the string and change it to any
@@ -16,29 +19,30 @@ public class LongestRepeatingCharacterReplacement {
 
     public static int longestRepeatingCharacterReplacement(String s, int k){
 
-        int[] count = new int[26];
-        int left = 0;
+        Map<Character, Integer> hmap = new HashMap<>();
+        int left = 0, right = 0, longest = 0;
         int maxFreq = 0;
-        int maxLen = 0;
+        while(right < s.length()){
 
-        for(int right = 0; right < s.length(); right++){
             char r = s.charAt(right);
-            count[r - 'A']++;
-            maxFreq = Math.max(maxFreq, count[r - 'A']);
+            hmap.put(r, hmap.getOrDefault(r, 0) + 1);
+            maxFreq = Math.max(maxFreq, hmap.get(r));
 
-            /*
-                window size - most frequent char count in the window = chars needing replacement
-                and if it is < k, we have a valid window
-             */
-            while((right - left + 1) - maxFreq > k){
+            if((right - left + 1) - maxFreq > k){
                 char l = s.charAt(left);
-                count[l - 'A']--;
+                int freq = hmap.get(l);
+                if(freq == 1){
+                    hmap.remove(l);
+                } else {
+                    hmap.put(l, freq - 1);
+                }
                 left++;
             }
-            // we have a valid window now
-            maxLen = Math.max(maxLen, right - left + 1);
-        }
 
-        return maxLen;
+            longest = Math.max(longest, right - left + 1);
+
+            right++;
+        }
+        return longest;
     }
 }
