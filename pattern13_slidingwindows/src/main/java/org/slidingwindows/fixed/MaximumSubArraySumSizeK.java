@@ -1,4 +1,4 @@
-package org.slidingwindows;
+package org.slidingwindows.fixed;
 
 public class MaximumSubArraySumSizeK {
 
@@ -9,6 +9,9 @@ public class MaximumSubArraySumSizeK {
         System.out.println(maximumSubArraySumSizeK(arr, k));
     }
 
+    /*
+        k is fixed -- fixed size sliding window
+     */
     private static int maximumSubArraySumSizeK(int[] arr, int k) {
 
         int n = arr.length;

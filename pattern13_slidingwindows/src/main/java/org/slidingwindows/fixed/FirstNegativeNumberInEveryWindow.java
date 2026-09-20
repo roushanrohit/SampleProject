@@ -1,4 +1,4 @@
-package org.slidingwindows;
+package org.slidingwindows.fixed;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,29 +17,24 @@ public class FirstNegativeNumberInEveryWindow {
 
     private static List<Integer> firstNegativeNoInEveryWindow(int[] arr, int k){
 
-        int n = arr.length;
-        if(n < k) return new ArrayList<>();
-
-        List<Integer> result = new ArrayList<>();
+        List<Integer> ans = new ArrayList<>();
         Queue<Integer> queue = new LinkedList<>();
-
-        // first window
         for(int i = 0; i < k; i++){
-            if(arr[i] < 0) queue.add(arr[i]);
+            if(arr[i] < 0){
+                queue.add(arr[i]);
+            }
         }
-        result.add(!queue.isEmpty() ? queue.peek() : 0);
-
-        // slide the window
-        for(int end = k; end < n; end++){
-
-            // element moving in
-            if(arr[end] < 0) queue.add(arr[end]);
-            // element moving out
-            if(arr[end - k] < 0) queue.poll();
-
-            result.add(!queue.isEmpty() ? queue.peek() : 0);
+        ans.add(!queue.isEmpty() ? queue.peek() : 0);
+        for(int j = k; j < arr.length; j++){
+            if(arr[j] < 0) {
+                queue.add(arr[j]);
+            }
+            if(arr[j - k] < 0) {
+                // it means this will be the first element in the queue
+                queue.poll();
+            }
+            ans.add(!queue.isEmpty() ? queue.peek() : 0);
         }
-
-        return result;
+        return ans;
     }
 }
