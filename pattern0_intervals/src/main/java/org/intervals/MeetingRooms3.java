@@ -15,18 +15,19 @@ public class MeetingRooms3 {
         System.out.print("Maximum meetings I can attend: " + intervalScheduling(intervals));
     }
 
-    private static int intervalScheduling(int[][] intervals) {
+    private static int intervalScheduling(int[][] intervals){
 
-        // sort by end times
+        //sort by end times
         Arrays.sort(intervals, Comparator.comparingInt(a -> a[1]));
-        int meetingsAttended = 0;
-        int lastEnd = Integer.MIN_VALUE;
-        for(int[] interval: intervals){
-            if(interval[0] >= lastEnd){
-                meetingsAttended++;
-                lastEnd = interval[1];
+        int[] current = intervals[0];
+        int meetings = 1;
+        for(int i = 1; i < intervals.length; i++){
+            int[] next = intervals[i];
+            if(next[0] >= current[1]){
+                meetings++;
+                current = next;
             }
         }
-        return meetingsAttended;
+        return meetings;
     }
 }

@@ -27,18 +27,16 @@ public class IlluminatingLamps {
         // sort the events
         events.sort(Comparator.comparingInt((int[] a) -> a[0]).thenComparing(a -> a[1]));
 
-        int active = 0;
-        int previous = events.get(0)[0];
         int ans = 0;
-        for(int[] event : events){
-            int position = event[0];
-            if(active == 1){
-                ans += (position - previous);
+        int currentLamps = 1;
+        int prevLampIndex = events.get(0)[0];
+        for(int i = 1; i < events.size(); i++){
+            if(currentLamps == 1){
+                ans += events.get(i)[0] - prevLampIndex;
             }
-            active += event[1];
-            previous = position;
+            currentLamps += events.get(i)[1];
+            prevLampIndex = events.get(i)[0];
         }
-
         return ans;
     }
 }

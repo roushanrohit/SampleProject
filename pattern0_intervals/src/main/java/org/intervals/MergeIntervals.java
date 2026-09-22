@@ -26,7 +26,7 @@ public class MergeIntervals {
 
             int[] next = intervals[i];
             // overlap
-            if(next[0] < current[1]){
+            if(next[0] <= current[1]){
                 current[1] = Math.max(current[1], next[1]);
             } else {
                 // no overlap
