@@ -1,4 +1,4 @@
-package org.heap;
+package org.priorityqueues;
 
 import java.util.Collections;
 import java.util.PriorityQueue;
@@ -21,21 +21,20 @@ public class LastStoneWeight {
 
     public static void main(String[] args) {
 
-        int[] arr = {2,7, 4, 1, 8, 1};
-        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder()); // max heap
-        for (int num : arr) {
+        int[] arr = {1, 7, 4, 1, 8, 1};
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+        for(int num : arr){
             pq.offer(num);
         }
+
         while(pq.size() > 1){
             int firstStone = pq.poll();
             int secondStone = pq.poll();
-            if(firstStone - secondStone > 0){
-                // add newly created stone to the heap
+            if(firstStone != secondStone){
                 pq.offer(firstStone - secondStone);
             }
         }
 
-        int lastStoneWeight = !pq.isEmpty() ? pq.poll() : -1;
-        System.out.println(lastStoneWeight);
+        System.out.println(pq.isEmpty() ? -1 : pq.poll());
     }
 }

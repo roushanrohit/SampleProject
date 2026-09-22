@@ -1,4 +1,4 @@
-package org.heap;
+package org.priorityqueues;
 
 import java.util.*;
 
@@ -17,11 +17,7 @@ public class TopKFrequentElements {
         // build the frequency hashmap
         Map<Integer, Integer> hmap = new HashMap<>();
         for(int num : arr){
-            if(hmap.containsKey(num)){
-                hmap.put(num, hmap.get(num) + 1);
-            } else {
-                hmap.put(num, 1);
-            }
+            hmap.put(num, hmap.getOrDefault(num, 0) + 1);
         }
 
         // priority queue is a min heap by default
@@ -29,7 +25,6 @@ public class TopKFrequentElements {
         PriorityQueue<Integer> minHeap = new PriorityQueue<>(Comparator.comparingInt(hmap::get));
 
         for(int num : hmap.keySet()){
-
             minHeap.offer(num);
             if(minHeap.size() > k){
                 minHeap.poll();
@@ -44,11 +39,7 @@ public class TopKFrequentElements {
         // build the frequency hashmap
         Map<Integer, Integer> hmap = new HashMap<>();
         for(int num : arr){
-            if(hmap.containsKey(num)){
-                hmap.put(num, hmap.get(num) + 1);
-            } else {
-                hmap.put(num, 1);
-            }
+            hmap.put(num, hmap.getOrDefault(num, 0) + 1);
         }
 
         // priority queue is a min heap by default
@@ -56,7 +47,6 @@ public class TopKFrequentElements {
         PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.comparingInt(hmap::get).reversed());
 
         for(int num : hmap.keySet()){
-
             maxHeap.offer(num);
             if(maxHeap.size() > k){
                 maxHeap.poll();

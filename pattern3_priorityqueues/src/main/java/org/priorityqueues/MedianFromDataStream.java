@@ -5,39 +5,33 @@ import java.util.PriorityQueue;
 
 public class MedianFromDataStream {
 
-    PriorityQueue<Double> maxHeapLo;
-    PriorityQueue<Double> minHeapRo;
+    public static void main(String[] args) {
 
-    public MedianFromDataStream() {
-        maxHeapLo = new PriorityQueue<>(Comparator.reverseOrder());
-        minHeapRo = new PriorityQueue<>();
+        PriorityQueue<Integer> maxHeapLo = new PriorityQueue<>(Comparator.reverseOrder());
+        PriorityQueue<Integer> minHeapRo = new PriorityQueue<>();
+
+        int[] arr = {41,35,62,5,97,100};
+        for(int num : arr){
+            addNum(maxHeapLo, minHeapRo, num);
+            System.out.println(findMedian(maxHeapLo, minHeapRo));
+        }
     }
 
-    public void addNum(int num) {
-        // add to the max heap
-        Double d = (double) num;
-        maxHeapLo.offer(d);
+    public static void addNum(PriorityQueue<Integer> maxHeapLo,
+                       PriorityQueue<Integer> minHeapRo, int num) {
+        maxHeapLo.offer(num);
         minHeapRo.offer(maxHeapLo.poll());
         if(minHeapRo.size() - maxHeapLo.size() == 1){
             maxHeapLo.offer(minHeapRo.poll());
         }
     }
 
-    public double findMedian() {
+    public static double findMedian(PriorityQueue<Integer> maxHeapLo,
+                             PriorityQueue<Integer> minHeapRo) {
         if(maxHeapLo.size() == minHeapRo.size()){
-            return (maxHeapLo.peek() + minHeapRo.peek()) / 2;
+            return (maxHeapLo.peek() + minHeapRo.peek()) / 2.0;
         } else {
             return maxHeapLo.peek();
-        }
-    }
-
-    public static void main(String[] args) {
-
-        MedianFromDataStream medianFromDataStream = new MedianFromDataStream();
-        int[] arr = {41,35,62,5,97,100};
-        for(int num : arr){
-            medianFromDataStream.addNum(num);
-            System.out.println(medianFromDataStream.findMedian());
         }
     }
 }

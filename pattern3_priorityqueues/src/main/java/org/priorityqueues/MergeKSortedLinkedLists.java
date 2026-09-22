@@ -1,4 +1,4 @@
-package org.heap;
+package org.priorityqueues;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;
@@ -7,9 +7,7 @@ import java.util.PriorityQueue;
 class ListNode {
   int val;
   ListNode next;
-  ListNode() {}
   ListNode(int val) { this.val = val; }
-  ListNode(int val, ListNode next) { this.val = val; this.next = next; }
 }
 
 public class MergeKSortedLinkedLists {
@@ -49,7 +47,7 @@ public class MergeKSortedLinkedLists {
         ListNode mergedListTail = null;
 
         while(!pq.isEmpty()){
-            ListNode listNode = pq.remove();
+            ListNode listNode = pq.poll();
             if(mergedListHead == null){
                 mergedListHead = listNode;
             } else {
