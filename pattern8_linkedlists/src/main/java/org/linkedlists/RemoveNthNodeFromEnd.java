@@ -17,11 +17,12 @@ public class RemoveNthNodeFromEnd {
         printLinkedList(newHead);
     }
 
-    public static LinkedListNode removeNthFromEnd(LinkedListNode head, int n) {
+    public static LinkedListNode removeNthFromEnd(LinkedListNode head, int n){
 
         LinkedListNode dummy = new LinkedListNode(0);
         dummy.next = head;
-        LinkedListNode slow = dummy, fast = dummy;
+        LinkedListNode slow = dummy;
+        LinkedListNode fast = dummy;
         for(int i = 0; i < n; i++){
             fast = fast.next;
         }

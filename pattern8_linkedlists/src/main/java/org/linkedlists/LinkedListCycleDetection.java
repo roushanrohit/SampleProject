@@ -16,12 +16,13 @@ public class LinkedListCycleDetection {
         System.out.println("has cycle: " + hasCycle(head));
     }
 
-    public static boolean hasCycle(LinkedListNode head) {
-        if(head == null) return false;
+    public static boolean hasCycle(LinkedListNode head){
 
+        if(head == null || head.next == null){
+            return false;
+        }
         LinkedListNode slow = head;
         LinkedListNode fast = head.next;
-
         while(slow != fast){
             if(fast == null || fast.next == null){
                 return false;
@@ -29,7 +30,6 @@ public class LinkedListCycleDetection {
             slow = slow.next;
             fast = fast.next.next;
         }
-
         return true;
     }
 }

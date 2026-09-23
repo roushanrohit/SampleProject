@@ -4,8 +4,8 @@ public class WinnerOfCircularGame {
 
     public static void main(String[] args) {
 
-        int n = 5;
-        int k = 2;
+        int n = 5000000;
+        int k = 2990;
         System.out.println(winnerOfCircularGame(n, k));
     }
 
