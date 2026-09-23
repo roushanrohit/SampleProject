@@ -8,7 +8,7 @@ import java.util.Stack;
     For every element, find the next greater element, considering that after the last element
     we wrap around to the beginning.
  */
-public class NextGreaterElement2 {
+public class NextGreaterElementRotated {
 
     public static void main(String[] args) {
 
@@ -17,21 +17,13 @@ public class NextGreaterElement2 {
         for(int num : ans){
             System.out.print(num + " ");
         }
+        System.out.println();
+        int[] ans2 = prevGreaterElement(nums);
+        for(int num : ans2){
+            System.out.print(num + " ");
+        }
     }
 
-    /*
-        Given arr is: [1,2,1]
-        The trick is we iterate the array two times:
-        i        i % n      value
-        7          3          2
-        6          2          4
-        5          1          3
-        4          0          1
-        3          3          2
-        2          2          4
-        1          1          3
-        0          0          1
-     */
     private static int[] nextGreaterElement(int[] nums) {
 
         int n = nums.length;
@@ -40,14 +32,33 @@ public class NextGreaterElement2 {
         Stack<Integer> stack = new Stack<>();
 
         for(int i = 2 * n - 1; i >= 0; i--){
-            int current = nums[i % n];
-            while (!stack.isEmpty() && stack.peek() <= current) {
+            while (!stack.isEmpty() && stack.peek() <= nums[i % n]) {
                 stack.pop();
             }
             if (i < n && !stack.isEmpty()) {
                 ans[i] = stack.peek();
             }
-            stack.push(current);
+            stack.push(nums[i % n]);
+        }
+
+        return ans;
+    }
+
+    private static int[] prevGreaterElement(int[] nums) {
+
+        int n = nums.length;
+        int[] ans = new int[n];
+        Arrays.fill(ans, -1);
+        Stack<Integer> stack = new Stack<>();
+
+        for(int i = 0; i < 2 * n; i++){
+            while (!stack.isEmpty() && stack.peek() <= nums[i % n]) {
+                stack.pop();
+            }
+            if (i >= n && !stack.isEmpty()) {
+                ans[i % n] = stack.peek();
+            }
+            stack.push(nums[i % n]);
         }
 
         return ans;
