@@ -1,4 +1,4 @@
-package org.example.designpatterns.tesco_rule_engine;
+package org.tesco_rule_engine;
 
 import java.util.ArrayList;
 import java.util.List;
