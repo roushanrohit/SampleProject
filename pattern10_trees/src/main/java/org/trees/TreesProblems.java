@@ -88,25 +88,14 @@ public class TreesProblems {
 
         for(int i = 0; i < root.children.size(); i++){
             Pair<Integer, Integer> smallAns = secondLargestNode(root.children.get(i));
-            if(smallAns.first > largest){
-                if(smallAns.second > largest){
-                    secondLargest = smallAns.second;
-                } else {
-                    secondLargest = largest;
-                }
+            if(smallAns.second > largest){
                 largest = smallAns.first;
-            } else {
-                // smallAns.first == largest
-                if(smallAns.first.equals(largest)){
-                    if(smallAns.second > secondLargest){
-                        secondLargest = smallAns.second;
-                    }
-                } else {
-                    // smallAns.first < largest
-                    if (smallAns.first > secondLargest) {
-                        secondLargest = smallAns.first;
-                    }
-                }
+                secondLargest = smallAns.second;
+            } else if(smallAns.first > largest) {
+                secondLargest = largest;
+                largest = smallAns.first;
+            } else if(smallAns.first > secondLargest){
+                secondLargest = smallAns.first;
             }
         }
 
@@ -157,7 +146,8 @@ public class TreesProblems {
     private static int countLeafNodes(NryTreeNode<Integer> root) {
 
         if(root == null) return 0;
-        int count = root.children.isEmpty() ? 1 : 0;
+        if(root.children.isEmpty()) return 1;
+        int count = 0;
         for(int i = 0; i < root.children.size(); i++){
             count += countLeafNodes(root.children.get(i));
         }

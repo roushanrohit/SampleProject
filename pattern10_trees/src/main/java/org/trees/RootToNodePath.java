@@ -9,7 +9,7 @@ public class RootToNodePath {
         Scanner s = new Scanner(System.in);
         BinaryTreeNode<Integer> root = takeInputLevelWise(s);
         printBinaryTreeLevelWise(root);
-        System.out.println("Root to node path : " + rootToNodePath(root, 11));
+        System.out.println("Root to node path : " + rootToNodePath(root, 9));
     }
 
     private static List<Integer> rootToNodePath(BinaryTreeNode<Integer> root, int a) {

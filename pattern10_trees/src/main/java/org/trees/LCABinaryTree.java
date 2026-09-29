@@ -11,7 +11,7 @@ public class LCABinaryTree {
         Scanner s = new Scanner(System.in);
         BinaryTreeNode<Integer> root = takeInputLevelWise(s);
         printBinaryTreeLevelWise(root);
-        System.out.println("LCA of nodes 5 and 7: " + lca(root, 15, 17));
+        System.out.println("LCA: " + lca(root, 2, 9));
     }
 
     private static int lca(BinaryTreeNode<Integer> root, int a, int b) {

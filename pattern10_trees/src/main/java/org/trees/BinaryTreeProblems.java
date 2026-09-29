@@ -9,8 +9,13 @@ public class BinaryTreeProblems {
         BinaryTreeNode<Integer> root = takeInputLevelWise(s);
         System.out.println("count nodes : " + countNodes(root));
         System.out.println("height: " + height(root));
+        printBinaryTreeLevelWise(root);
         mirror(root);
         printBinaryTreeLevelWise(root);
+        BinaryTreeNode<Integer> nodeJustGreaterThanX = nodeJustGreaterThanX(root, 5);
+        int justGreaterThanXValue =  nodeJustGreaterThanX != null ? nodeJustGreaterThanX.data : -1;
+        System.out.println("Node just greater than 5: " + justGreaterThanXValue);
+        System.out.println("Second largest node data: " + secondLargestNode(root).second);
         boolean isBST = checkBST(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
         System.out.println("Is BST: " + isBST);
         if(isBST){
@@ -23,6 +28,60 @@ public class BinaryTreeProblems {
             kthSmallestElement(root, pq, k);
             System.out.println("kth smallest element: " + pq.peek());
         }
+    }
+
+
+    private static Pair<Integer, Integer> secondLargestNode(BinaryTreeNode<Integer> root) {
+        if(root == null){
+            return null;
+        }
+        int largest = root.data;
+        int secondLargest = Integer.MIN_VALUE;
+        Pair<Integer, Integer> leftAns = secondLargestNode(root.left);
+        if(leftAns != null) {
+            if (leftAns.second > largest) {
+                largest = leftAns.first;
+                secondLargest = leftAns.second;
+            } else if (leftAns.first > largest) {
+                secondLargest = largest;
+                largest = leftAns.first;
+            } else if (leftAns.first > secondLargest) {
+                secondLargest = leftAns.first;
+            }
+        }
+        Pair<Integer, Integer> rightAns = secondLargestNode(root.right);
+        if(rightAns != null) {
+            if (rightAns.second > largest) {
+                largest = rightAns.first;
+                secondLargest = rightAns.second;
+            } else if (rightAns.first > largest) {
+                secondLargest = largest;
+                largest = rightAns.first;
+            } else if (rightAns.first > secondLargest) {
+                secondLargest = rightAns.first;
+            }
+        }
+        return new Pair<>(largest, secondLargest);
+    }
+
+    private static BinaryTreeNode<Integer> nodeJustGreaterThanX(BinaryTreeNode<Integer> root, int x){
+
+        if(root == null) {
+            return null;
+        }
+        BinaryTreeNode<Integer> ans = null;
+        if(root.data > x){
+            ans = root;
+        }
+        BinaryTreeNode<Integer> leftAns = nodeJustGreaterThanX(root.left, x);
+        if(leftAns != null && (ans == null || leftAns.data < ans.data)){
+            ans = leftAns;
+        }
+        BinaryTreeNode<Integer> rightAns = nodeJustGreaterThanX(root.right, x);
+        if(rightAns != null && (ans == null || rightAns.data < ans.data)){
+            ans = rightAns;
+        }
+        return ans;
     }
 
     private static List<Integer> inorder(BinaryTreeNode<Integer> root, List<Integer> list) {
