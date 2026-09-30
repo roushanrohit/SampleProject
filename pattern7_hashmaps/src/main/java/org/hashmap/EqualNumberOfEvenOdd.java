@@ -8,40 +8,33 @@ import java.util.Map;
 public class EqualNumberOfEvenOdd {
 
     public static void main(String[] args) {
-                           // 0   1   2  3   4  5
-        int[] arr = new int[]{4, -1, -1, 1, -2, 3};
-                           // 1   0  -1 -2  -1 -2
-        System.out.println("total number of subsets with equal number of even and odds : "
-                + subsetsWithEqualNumberOfEvenAndOdds(arr));
-
+        int[] arr = new int[]{4, 1, 1, 1, 2, 3};
+        List<int[]> subSetsWithEqualEvenAndOdd = subsetsWithEqualNumberOfEvenAndOdds(arr);
+        for(int[] a : subSetsWithEqualEvenAndOdd){
+            System.out.println("startIndex: " + a[0] + " , endIndex: " + a[1]);
+        }
     }
 
-    private static int subsetsWithEqualNumberOfEvenAndOdds(int[] arr) {
+    private static List<int[]> subsetsWithEqualNumberOfEvenAndOdds(int[] arr) {
 
+        List<int[]> ans = new ArrayList<>();
         /*
-           Idea is to represent even with 1 and odd with -1
+           Idea is to represent even with 1 and odd with -1, equal number of odds and even means k = 0
            then prepare a prefix sum hashmap with value = list of indices and key = sum till those indices
          */
-        Map<Integer, List<Integer>> hmap = new HashMap<>();
+        Map<Integer, List<Integer>> prefixSumMap = new HashMap<>();
         int sum = 0;
-        int count = 0;
-
         for(int i = 0; i < arr.length; i++){
-
             sum += (arr[i] % 2 == 0 ? 1 : -1);
             if(sum == 0) {
-                count++;
-            } else if (hmap.containsKey(sum)){
-                count += hmap.get(sum).size();
+                ans.add(new int[]{0, i});
+            } else if (prefixSumMap.containsKey(sum)){
+                for(int index : prefixSumMap.get(sum)){
+                    ans.add(new int[]{index + 1, i});
+                }
             }
-
-            List<Integer> indices = hmap.get(sum);
-            if(indices == null) indices = new ArrayList<>();
-            indices.add(i);
-            hmap.put(sum, indices);
+            prefixSumMap.computeIfAbsent(sum, m -> new ArrayList<>()).add(i);
         }
-
-        System.out.println(hmap);
-        return count;
+        return ans;
     }
 }

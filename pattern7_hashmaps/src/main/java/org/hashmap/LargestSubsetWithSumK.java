@@ -27,11 +27,8 @@ public class LargestSubsetWithSumK {
                 largest = i + 1;
             } else if (hmap.containsKey(sum - k)){
                 largest = Math.max(largest, i - hmap.get(sum - k));
-            } else {
-
-                // store first occurrence only
-                hmap.put(sum, i);
             }
+            hmap.putIfAbsent(sum, i);
         }
         return largest;
     }

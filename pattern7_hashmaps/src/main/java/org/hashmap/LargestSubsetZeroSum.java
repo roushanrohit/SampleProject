@@ -27,7 +27,6 @@ public class LargestSubsetZeroSum {
             } else if (hmap.containsKey(sum)){
                 largest = Math.max(largest, i - hmap.get(sum));
             } else {
-
                 // store first occurrence only
                 hmap.put(sum, i);
             }

@@ -9,33 +9,31 @@ public class CountSubsetsWithSumK {
 
     public static void main(String[] args) {
 
-        int[] arr = new int[]{4,-1,-1,1,-2,3};
-        int k = 5;
-        System.out.println("number of subsets with k sum: " + countSubsetWithSumK(arr, k));
-
+        int[] arr = new int[]{2, 3, 5, 6, 8, 10};
+        int k = 10;
+        List<int[]> indicesOfSubsetSumK = subsetsWihSumK(arr, k);
+        for(int[] a : indicesOfSubsetSumK){
+            System.out.println("startIndex: " + a[0] + " , endIndex: " + a[1]);
+        }
     }
 
-    private static int countSubsetWithSumK(int[] arr, int k) {
+    private static List<int[]> subsetsWihSumK(int[] arr, int k){
 
-        // value = indices, key = sum till that index
-        Map<Integer, List<Integer>> hmap = new HashMap<>();
+        List<int[]> ans = new ArrayList<>();
+        // key -- prefix sum, value -- indices
+        Map<Integer, List<Integer>> prefixSumMap = new HashMap<>();
         int sum = 0;
-        int count = 0;
-
         for(int i = 0; i < arr.length; i++){
-
             sum += arr[i];
-            if(sum == k) {
-                count++;
-            } else if (hmap.containsKey(sum - k)){
-                count += hmap.get(sum - k).size();
+            if(sum == k){
+                ans.add(new int[]{0, i});
+            } else if(prefixSumMap.containsKey(sum - k)){
+                for(int index : prefixSumMap.get(sum - k)){
+                    ans.add(new int[]{index + 1, i});
+                }
             }
-
-            List<Integer> indices = hmap.get(sum);
-            if(indices == null) indices = new ArrayList<>();
-            indices.add(i);
-            hmap.put(sum, indices);
+            prefixSumMap.computeIfAbsent(sum, m -> new ArrayList<>()).add(i);
         }
-        return count;
+        return ans;
     }
 }
