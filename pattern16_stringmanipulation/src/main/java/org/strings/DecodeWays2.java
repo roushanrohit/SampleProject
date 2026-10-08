@@ -8,8 +8,8 @@ public class DecodeWays2 {
     public static void main(String[] args) {
 
         //String s = "909";
-        String s = "109";
-        System.out.println("Number of ways to decode string: " + s + " : " + decodeString(s, 0));
+        String s = "9891263";
+        System.out.println("Possible decoded strings: " + s + " : " + decodeString(s, 0));
     }
 
     private static List<String> decodeString(String s, int index){

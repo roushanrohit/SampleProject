@@ -1,4 +1,4 @@
-package org.strings;
+package org.slidingwindows.fixed;
 
 public class CountAnagrams {
 
